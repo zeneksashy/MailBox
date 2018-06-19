@@ -21,6 +21,15 @@ using MailKit.Net.Imap;
 using MailKit.Search;
 using MailKit;
 using MailBox.Properties;
+//TODO
+//Show Attachments
+// Reply to
+// Send msg
+//Filtering
+//Sorting ?
+//Nicer look
+//Logout 
+//Changing hosts
 
 namespace MailBox
 {
@@ -33,6 +42,7 @@ namespace MailBox
         Client client = Client.GetInstance();
         List<MimeMessage> msg = new List<MimeMessage>();
         ImapClient imap;
+        List<string> tempdirs = new List<string>();
         IMailFolder inbox;
 
         public MainWindow()
@@ -89,12 +99,27 @@ namespace MailBox
         }
         public void OpenInBrowser(int uid)
         {
-
-            var tmp = System.IO.Path.Combine(path, "msg" + uid, "images");
+            var message = msg[uid-1];
+            StringBuilder sb = new StringBuilder();
+            var from = getMailbox(message.From.Mailboxes);
+            var to = getMailbox(message.To.Mailboxes);
+            var date = message.Date;
+            var subject = message.Subject;
+            foreach (var adr in from)
+            {
+                sb.Append("OD: ").Append(adr).Append(" ");
+            }
+            foreach (var adr in to)
+            {
+                sb.Append("DO: ").Append(adr).Append(" ");
+            }
+            sb.AppendLine().Append("Temat: ").Append(subject).Append(" Data: ").Append(date);
+            var tmp = System.IO.Path.Combine(path, "msg" + uid);
             var htmlpreview = new HtmlPreviewVisitor(tmp);
             Directory.CreateDirectory(tmp);
-            msg[uid - 1].Accept(htmlpreview);
-            
+            tempdirs.Add(tmp);
+            message.Accept(htmlpreview);
+            text.Text = sb.ToString();
             browser.NavigateToString(htmlpreview.HtmlBody);
         }
         private void Window_ContentRendered(object sender, EventArgs e)
@@ -106,7 +131,15 @@ namespace MailBox
                 Task.Run(() => LoadMessages(path));
             }
         }
-
+        private List<string> getMailbox(IEnumerable<MailboxAddress> addresses)
+        {
+            var listofadrs = new List<string>();
+            foreach (var addres in addresses)
+            {
+                listofadrs.Add(addres.Address);
+            }
+            return listofadrs;
+        }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             imap.Disconnect(true);
@@ -124,6 +157,14 @@ namespace MailBox
             }
             Settings.Default.isSaved = true;
             Settings.Default.Save();
+            DeleteTemps();
+        }
+        private void DeleteTemps()
+        {
+            foreach (var dir in tempdirs)
+            {
+                Directory.Delete(dir);
+            }
         }
     }
     
