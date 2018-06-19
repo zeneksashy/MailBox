@@ -26,7 +26,7 @@ namespace MailBox
         }
         public void ShowMessageList(List<MimeMessage> messages)
         {
-            int i = 0;
+            int i = 1;
             foreach (var msg in messages)
             {
                 StringBuilder sb = new StringBuilder();
@@ -37,7 +37,7 @@ namespace MailBox
                 string body="empty message";
                 if (!String.IsNullOrEmpty(msg.TextBody))
                     body = msg.TextBody;
-                body = splitted(body);
+                body = Splitted(body);
                 foreach (var adr in from)
                 {
                     sb.Append("OD: ").Append(adr).Append(" ");
@@ -61,10 +61,11 @@ namespace MailBox
             var txtblck = new TextBlock();
             txtblck.MouseEnter += TextBlock_MouseEnter;
             txtblck.MouseLeave += TextBlock_MouseLeave;
+            txtblck.PreviewMouseDown += TextBlock_Click;
             txtblck.Foreground = Brushes.Black;
             return txtblck;
         }
-        private string splitted(string str)
+        private string Splitted(string str)
         {
             var split= str.Split();
             string body=String.Empty;
@@ -86,6 +87,8 @@ namespace MailBox
         {
             var block = sender as TextBlock;
             int uid = int.Parse(block.Uid);
+            MainWindow win = App.Current.MainWindow as MainWindow;
+            win.OpenInBrowser(uid);
 
         }
         private void TextBlock_MouseLeave(object sender, MouseEventArgs arg)

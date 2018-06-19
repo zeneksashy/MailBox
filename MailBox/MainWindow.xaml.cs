@@ -53,9 +53,14 @@ namespace MailBox
                 client.mails.Add(item);
                 msg.Add(item);
             }
-            mails.Dispatcher.Invoke (()=> mails.ShowMessageList(msg));
-            progress_label.Dispatcher.Invoke(()=> progress_label.Visibility = Visibility.Hidden);
+            ChangeVisibilities();
+        }
+        private void ChangeVisibilities()
+        {
+            mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
+            progress_label.Dispatcher.Invoke(() => progress_label.Visibility = Visibility.Hidden);
             bar.Dispatcher.Invoke(() => bar.Visibility = Visibility.Hidden);
+            browser.Dispatcher.Invoke(() => browser.Visibility = Visibility.Visible);
         }
         private void LoadMessages(string path)
         {
@@ -64,9 +69,7 @@ namespace MailBox
             {
                 msg.Add(MimeMessage.Load(file));
             }
-            mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
-            progress_label.Dispatcher.Invoke(() => progress_label.Visibility = Visibility.Hidden);
-            bar.Dispatcher.Invoke(() => bar.Visibility = Visibility.Hidden);
+            ChangeVisibilities();
         }
         IEnumerable<MimeMessage> Fetch(IMailFolder inbox)
         {    
@@ -84,7 +87,16 @@ namespace MailBox
                 previous.Close();
             }       
         }
+        public void OpenInBrowser(int uid)
+        {
 
+            var tmp = System.IO.Path.Combine(path, "msg" + uid, "images");
+            var htmlpreview = new HtmlPreviewVisitor(tmp);
+            Directory.CreateDirectory(tmp);
+            msg[uid - 1].Accept(htmlpreview);
+            
+            browser.NavigateToString(htmlpreview.HtmlBody);
+        }
         private void Window_ContentRendered(object sender, EventArgs e)
         {
             if(!Settings.Default.isSaved)
@@ -93,7 +105,6 @@ namespace MailBox
             {
                 Task.Run(() => LoadMessages(path));
             }
-
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
