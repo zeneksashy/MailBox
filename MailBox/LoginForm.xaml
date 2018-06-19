@@ -1,0 +1,18 @@
+﻿<Window x:Class="MailBox.LoginForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        WindowStartupLocation="CenterScreen"
+        xmlns:local="clr-namespace:MailBox"
+        mc:Ignorable="d"
+        Title="LoginForm" Height="300" Width="500" KeyDown="Window_KeyDown">
+    <Grid>
+        <Label Content="E-MAIL" HorizontalAlignment="Left" Margin="146,30,0,0" VerticalAlignment="Top" Width="194" FontSize="18" SnapsToDevicePixels="True" HorizontalContentAlignment="Center"/>
+        <TextBox x:Name="mail_textbox" HorizontalAlignment="Left" Height="32" Margin="146,69,0,0" TextWrapping="Wrap" Text="someemail@some.domain" VerticalAlignment="Top" Width="194" HorizontalContentAlignment="Center" FontSize="16" VerticalContentAlignment="Center" GotFocus="TextBox_GotFocus"/>
+        <Label Content="PASSWORD" HorizontalAlignment="Left" Margin="146,121,0,0" VerticalAlignment="Top" Width="194" FontSize="18" SnapsToDevicePixels="True" HorizontalContentAlignment="Center"/>
+        <PasswordBox x:Name="passwordbox" HorizontalAlignment="Left" Margin="146,160,0,0" VerticalAlignment="Top" Width="194" Height="27" FontSize="16" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+        <Button x:Name="button" Content="Connect" HorizontalAlignment="Left" Margin="194,211,0,0" VerticalAlignment="Top" Width="99" Height="26" Click="Button_Click"/>
+
+    </Grid>
+</Window>
