@@ -28,8 +28,9 @@ using MailBox.Properties;
 //Filtering
 //Sorting ?
 //Nicer look
-//Logout 
+//Logout -- done 
 //Changing hosts
+//imap idle
 
 namespace MailBox
 {
@@ -44,17 +45,21 @@ namespace MailBox
         ImapClient imap;
         List<string> tempdirs = new List<string>();
         IMailFolder inbox;
-
+        ImapClient idleclient;
         public MainWindow()
         {
             InitializeComponent();
             path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             path +=@"\"+client.setName()+@"\mails";
             imap = new ImapClient();
+            idleclient= new ImapClient();
+            idleclient.Connect(client.Host, 993, true);
+            idleclient.Authenticate(client.Email, client.Password);
             imap.Connect(client.Host, 993, true);
-            imap.Authenticate(client.Email, client.Password);
+            imap.Authenticate(client.Email, client.Password);         
             inbox = imap.Inbox;
             inbox.Open(FolderAccess.ReadOnly);
+            imap.IdleAsync(new CancellationToken());
         }
         private void LoadMessages()
         {
@@ -71,6 +76,7 @@ namespace MailBox
             progress_label.Dispatcher.Invoke(() => progress_label.Visibility = Visibility.Hidden);
             bar.Dispatcher.Invoke(() => bar.Visibility = Visibility.Hidden);
             browser.Dispatcher.Invoke(() => browser.Visibility = Visibility.Visible);
+            // IdleState.Idle(idleclient);
         }
         private void LoadMessages(string path)
         {
@@ -165,6 +171,29 @@ namespace MailBox
             {
                 Directory.Delete(dir);
             }
+        }
+        public void FetchIdle()
+        {     
+             inbox = imap.Inbox;
+             inbox.Open(FolderAccess.ReadOnly);
+            int count = msg.Count;
+            for (int i = count; i < inbox.Count; i++)
+            {
+                msg.Add(inbox.GetMessage(i));
+            }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            imap.Disconnect(true);
+            new LoginForm().Show();
+            Settings.Default.host = String.Empty;
+            Settings.Default.mail = String.Empty;
+            Settings.Default.pass = String.Empty;
+            Settings.Default.isSaved = false;
+            Settings.Default.isAuthenticated = false;
+            Settings.Default.Save();
+            this.Hide();
         }
     }
     

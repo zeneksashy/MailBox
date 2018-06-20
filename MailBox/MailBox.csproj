@@ -69,6 +69,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="HtmlPreview.cs" />
+    <Compile Include="Idle.cs" />
     <Compile Include="ImapClient.cs" />
     <Compile Include="MailList.xaml.cs">
       <DependentUpon>MailList.xaml</DependentUpon>

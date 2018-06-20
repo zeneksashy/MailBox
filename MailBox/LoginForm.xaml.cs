@@ -26,6 +26,7 @@ namespace MailBox
         public LoginForm()
         {
             InitializeComponent();
+            App.Current.MainWindow = this;
         }
 
         private void TextBox_GotFocus(object sender, RoutedEventArgs e)

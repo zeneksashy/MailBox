@@ -5,18 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MailBox"
         mc:Ignorable="d"
-        Title="MainWindow" Height="720" Width="1280" Loaded="Window_Loaded" ContentRendered="Window_ContentRendered" Closing="Window_Closing">
+        Title="MainWindow" Height="864" Width="1536" Loaded="Window_Loaded" ContentRendered="Window_ContentRendered" Closing="Window_Closing">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10*"/>
             <ColumnDefinition Width="155*"/>
-            <ColumnDefinition Width="1107*"/>
+            <ColumnDefinition Width="650*"/>
+            <ColumnDefinition Width="457*"/>
         </Grid.ColumnDefinitions>
-        <ProgressBar x:Name="bar" HorizontalAlignment="Left" Height="40" Margin="154,639,0,0" VerticalAlignment="Top" Width="943" Minimum="0" Maximum="100" IsIndeterminate="True" Visibility="Visible" Panel.ZIndex="3" Grid.Column="2"/>
-        <Label x:Name="progress_label" Content="Ładowanie wiadomości" HorizontalAlignment="Center" Margin="352,542,249,55" VerticalAlignment="Center" Width="506" Height="92" FontSize="48" Visibility="Visible" Panel.ZIndex="4" Grid.Column="2"/>
-        <WebBrowser x:Name="browser" HorizontalAlignment="Left" Height="496" Margin="130,102,0,0" VerticalAlignment="Top" Width="951" Panel.ZIndex="5" Visibility="Hidden" Grid.Column="2"/>
-        <local:MailList x:Name="mails" Grid.ColumnSpan="2" Grid.Column="1" HorizontalAlignment="Left" Height="689" VerticalAlignment="Top" Width="280"/>
-        <TextBlock x:Name="text" Grid.Column="2" HorizontalAlignment="Left" Margin="130,0,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" RenderTransformOrigin="0.51,1.719" Height="56" Width="967"/>
+        <ProgressBar x:Name="bar" HorizontalAlignment="Left" Height="40" Margin="92,752,0,0" VerticalAlignment="Top" Width="1228" Minimum="0" Maximum="100" IsIndeterminate="True" Visibility="Visible" Panel.ZIndex="3" Grid.Column="2" Grid.ColumnSpan="2"/>
+        <Label x:Name="progress_label" Content="Ładowanie wiadomości" HorizontalAlignment="Center" Margin="448,731,376,10" VerticalAlignment="Center" Width="506" Height="92" FontSize="48" Visibility="Visible" Panel.ZIndex="4" Grid.Column="2" Grid.ColumnSpan="2"/>
+        <WebBrowser x:Name="browser" HorizontalAlignment="Left" Height="640" Margin="92,86,0,0" VerticalAlignment="Top" Width="1228" Panel.ZIndex="5" Visibility="Visible" Grid.Column="2" Grid.ColumnSpan="2"/>
+        <local:MailList x:Name="mails" Grid.ColumnSpan="3" HorizontalAlignment="Left" Height="799" VerticalAlignment="Top" Width="285" Margin="0,24,0,0"/>
+        <TextBlock x:Name="text" Grid.Column="2" HorizontalAlignment="Left" Margin="92,24,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" RenderTransformOrigin="0.51,1.719" Height="56" Width="1228" Grid.ColumnSpan="2"/>
+        <Menu HorizontalAlignment="Left" Height="19" VerticalAlignment="Top" Width="1518" Grid.ColumnSpan="4">
+            <Button Content="Logout" Click="Button_Click"/>
+            <Button Content="Change Host" />
+        </Menu>
 
     </Grid>
 </Window>
