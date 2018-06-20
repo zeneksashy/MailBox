@@ -74,6 +74,7 @@
     <Compile Include="HtmlPreview.cs" />
     <Compile Include="Idle.cs" />
     <Compile Include="ImapClient.cs" />
+    <Compile Include="Imapfeatures.cs" />
     <Compile Include="MailList.xaml.cs">
       <DependentUpon>MailList.xaml</DependentUpon>
     </Compile>

@@ -20,6 +20,20 @@
         <TextBlock x:Name="text" Grid.Column="2" HorizontalAlignment="Left" Margin="92,24,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" RenderTransformOrigin="0.51,1.719" Height="56" Width="1228" Grid.ColumnSpan="2"/>
         <Menu HorizontalAlignment="Left" Height="19" VerticalAlignment="Top" Width="1518" Grid.ColumnSpan="4">
             <Button Content="Logout" Click="Button_Click"/>
+            <MenuItem Header="Sort By">
+                <MenuItem Header="Date">
+                    <MenuItem Header="ASC" Click="MenuItem_Click"/>
+                    <MenuItem Header="DSC" Click="MenuItem_Click"/>
+                </MenuItem>
+                <MenuItem Header="Subject">
+                    <MenuItem Header="ASC" Click="MenuItem_Click"/>
+                    <MenuItem Header="DSC" Click="MenuItem_Click"/>
+                </MenuItem>
+                <MenuItem Header="From">
+                    <MenuItem Header="ASC" Click="MenuItem_Click"/>
+                    <MenuItem Header="DSC" Click="MenuItem_Click"/>
+                </MenuItem>
+            </MenuItem>
         </Menu>
 
     </Grid>

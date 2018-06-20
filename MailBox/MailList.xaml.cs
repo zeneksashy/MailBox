@@ -26,6 +26,7 @@ namespace MailBox
         }
         public void ShowMessageList(List<MimeMessage> messages)
         {
+            panel.Children.Clear();
             int i = 1;
             foreach (var msg in messages)
             {

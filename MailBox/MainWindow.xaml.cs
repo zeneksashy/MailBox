@@ -25,7 +25,7 @@ using MailBox.Properties;
 //Show Attachments
 // Reply to
 // Send msg
-//Filtering
+//Filtering -- need testing
 //Sorting  -- done
 //Nicer look
 //Logout -- done 
@@ -40,6 +40,7 @@ namespace MailBox
     /// </summary>
     public partial class MainWindow : Window
     {
+        Imapfeatures features;
         string path;
         Client client = Client.GetInstance();
         List<MimeMessage> msg = new List<MimeMessage>();
@@ -74,8 +75,8 @@ namespace MailBox
         }
         private void ChangeVisibilities()
         {
-            msg.Sort((m1, m2) => m1.Date.CompareTo(m2.Date));
-            msg.Reverse();
+            features = new Imapfeatures(msg);
+            msg = features.SortBy(SortFilters.Date, Order.DSC);
             mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
             progress_label.Dispatcher.Invoke(() => progress_label.Visibility = Visibility.Hidden);
             bar.Dispatcher.Invoke(() => bar.Visibility = Visibility.Hidden);
@@ -196,6 +197,34 @@ namespace MailBox
             Settings.Default.isAuthenticated = false;
             Settings.Default.Save();
             this.Hide();
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var menu = sender as MenuItem;
+            var parent = menu.Parent as MenuItem;
+            var orders = Enum.GetNames(typeof(Order));
+            var filters = Enum.GetNames(typeof(SortFilters));
+            Order ord = Order.DSC;
+            SortFilters sort = SortFilters.Date;
+            foreach (var order in orders)
+            {
+                if((string)menu.Header == order)
+                {
+                    Enum.TryParse(order, out ord);
+                    break;
+                }
+            }
+            foreach (var filt in filters)
+            {
+                if ((string)parent.Header == filt)
+                {
+                    Enum.TryParse(filt, out sort);
+                    break;
+                }
+            }
+             msg= features.SortBy(sort, ord);
+            mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
         }
     }
     
