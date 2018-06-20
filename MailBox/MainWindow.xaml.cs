@@ -26,11 +26,12 @@ using MailBox.Properties;
 // Reply to
 // Send msg
 //Filtering
-//Sorting ?
+//Sorting  -- done
 //Nicer look
 //Logout -- done 
 //Changing hosts -- done
 //imap idle
+//inbox add ?
 
 namespace MailBox
 {
@@ -68,15 +69,17 @@ namespace MailBox
                 client.mails.Add(item);
                 msg.Add(item);
             }
+           
             ChangeVisibilities();
         }
         private void ChangeVisibilities()
         {
+            msg.Sort((m1, m2) => m1.Date.CompareTo(m2.Date));
+            msg.Reverse();
             mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
             progress_label.Dispatcher.Invoke(() => progress_label.Visibility = Visibility.Hidden);
             bar.Dispatcher.Invoke(() => bar.Visibility = Visibility.Hidden);
             browser.Dispatcher.Invoke(() => browser.Visibility = Visibility.Visible);
-            // IdleState.Idle(idleclient);
         }
         private void LoadMessages(string path)
         {
