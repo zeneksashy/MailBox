@@ -29,7 +29,7 @@ using MailBox.Properties;
 //Sorting ?
 //Nicer look
 //Logout -- done 
-//Changing hosts
+//Changing hosts -- done
 //imap idle
 
 namespace MailBox
@@ -53,9 +53,9 @@ namespace MailBox
             path +=@"\"+client.setName()+@"\mails";
             imap = new ImapClient();
             idleclient= new ImapClient();
-            idleclient.Connect(client.Host, 993, true);
+            idleclient.Connect(client.Host, client.Port, true);
             idleclient.Authenticate(client.Email, client.Password);
-            imap.Connect(client.Host, 993, true);
+            imap.Connect(client.Host, client.Port, true);
             imap.Authenticate(client.Email, client.Password);         
             inbox = imap.Inbox;
             inbox.Open(FolderAccess.ReadOnly);
@@ -182,7 +182,6 @@ namespace MailBox
                 msg.Add(inbox.GetMessage(i));
             }
         }
-
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             imap.Disconnect(true);

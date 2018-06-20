@@ -30,10 +30,11 @@ namespace MailBox
         public string Password { get; set; }
         [DataMember]
         public string Host { get; set; }
+        public int Port { get; set; }
         [DataMember]
         public List<MimeMessage> mails = new List<MimeMessage>();
         private static readonly object locker = new object();
-        private Client() { }
+        private Client() { Port = 993; }
         private static Client client;
         public static Client GetInstance()
         {

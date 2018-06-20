@@ -22,6 +22,7 @@ namespace MailBox
     /// </summary>
     public partial class LoginForm : Window
     {
+        bool hostchanged=false;
         Client client = Client.GetInstance();
         public LoginForm()
         {
@@ -63,14 +64,18 @@ namespace MailBox
                 MessageBox.Show("pola nie moga byc puste");
                 return false;
             }
-            string imap = CheckHost(mail_textbox.Text);
-            client.Host = imap;
+            string imap = String.Empty;
+            if (!hostchanged)
+            {
+                imap = CheckHost(mail_textbox.Text);
+                client.Host = imap;
+            }    
             try
             {
                 using (var imapclient = new ImapClient())
                 {
                     imapclient.ServerCertificateValidationCallback = (s, c, h, e) => true;
-                    imapclient.Connect(client.Host, 993, true);
+                    imapclient.Connect(client.Host, client.Port, true);
                     imapclient.Authenticate(mail_textbox.Text, passwordbox.Password);
                 }
                 return true;
@@ -79,7 +84,21 @@ namespace MailBox
             {
                 MessageBox.Show("Zły login lub hasło");
             }
+            catch(System.Net.Sockets.SocketException ex)
+            {
+                MessageBox.Show("Nie prawidłowy host lub port, ustaw manualnie");
+                new HostCHange().Show();
+                Task.Run(() => ListenChanges(imap));         
+            }
             return false;
+        }
+        private void ListenChanges(string imap)
+        {
+            while (client.Host == imap)
+            {
+            }
+            hostchanged = true;
+            this.Dispatcher.Invoke(()=>Connect());
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
