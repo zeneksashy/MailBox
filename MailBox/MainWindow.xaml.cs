@@ -50,6 +50,10 @@ namespace MailBox
         HashSet<string> tempdirs = new HashSet<string>();
         IMailFolder inbox;
         ImapClient idleclient;
+        /// <summary>
+        /// The main constructor of a window,Initializes default path for mails, creates imap clients and connects with server
+        ///
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -65,6 +69,9 @@ namespace MailBox
             inbox.Open(FolderAccess.ReadOnly);
             imap.IdleAsync(new CancellationToken());
         }
+        /// <summary>
+        /// fetches all the messages from inbox and add them to msg list
+        /// </summary>
         private void LoadMessages()
         {
             foreach (var item in Fetch(inbox))
@@ -75,6 +82,9 @@ namespace MailBox
            
             ChangeVisibilities();
         }
+        /// <summary>
+        /// After Loading mails to list it sorts it , hide progres bar and show browser with mailist
+        /// </summary>
         private void ChangeVisibilities()
         {
             features = new Imapfeatures(msg);
@@ -85,6 +95,10 @@ namespace MailBox
             bar.Dispatcher.Invoke(() => bar.Visibility = Visibility.Hidden);
             browser.Dispatcher.Invoke(() => browser.Visibility = Visibility.Visible);
         }
+        /// <summary>
+        /// Load mails from path and adds them to msg list
+        /// </summary>
+        /// <param name="path"> path of a mails </param>
         private void LoadMessages(string path)
         {
             var files = Directory.GetFiles(path);
@@ -94,6 +108,11 @@ namespace MailBox
             }
             ChangeVisibilities();
         }
+        /// <summary>
+        /// fetches all messages in inbox
+        /// </summary>
+        /// <param name="inbox"> inbox</param>
+        /// <returns> retruns abstract list with mails </returns>
         IEnumerable<MimeMessage> Fetch(IMailFolder inbox)
         {    
             for (int i = 0; i <inbox.Count; i++)
@@ -101,6 +120,7 @@ namespace MailBox
                 yield return inbox.GetMessage(i);
             }
         }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             var previous = App.Current.MainWindow;
@@ -110,6 +130,10 @@ namespace MailBox
                 previous.Close();
             }       
         }
+        /// <summary>
+        /// Shows a message in a browser
+        /// </summary>
+        /// <param name="uid">uid of message which we want to show</param>
         public void OpenInBrowser(int uid)
         {
             var message = msg[uid-1];
@@ -144,6 +168,11 @@ namespace MailBox
                 Task.Run(() => LoadMessages(path));
             }
         }
+        /// <summary>
+        /// Used to get mailboxes from "TO" and "From" list and return them as string
+        /// </summary>
+        /// <param name="addresses"> list of mailboxes</param>
+        /// <returns>list of mialboxes as string</returns>
         private List<string> getMailbox(IEnumerable<MailboxAddress> addresses)
         {
             var listofadrs = new List<string>();
@@ -172,6 +201,9 @@ namespace MailBox
             Settings.Default.Save();
            // DeleteTemps();
         }
+        /// <summary>
+        /// Deletes temporary files from appdata directory
+        /// </summary>
         private void DeleteTemps()
         {
             foreach (var dir in tempdirs)

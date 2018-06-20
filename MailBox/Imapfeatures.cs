@@ -28,15 +28,28 @@ namespace MailBox
     {
         List<MimeMessage> messages = new List<MimeMessage>();
         List<MimeMessage> filtred = new List<MimeMessage>();
+        /// <summary>
+        /// Main construcotr of imapfeatures class declare messages and filtred list from parameter
+        /// </summary>
+        /// <param name="messages"> list of messages from inbox</param>
         public Imapfeatures(List<MimeMessage> messages)
         {
             this.messages = messages;
             this.filtred = messages;
         }
+        /// <summary>
+        /// reset the filtred list to initial state
+        /// </summary>
         public void ResetFilters()
         {
             filtred = messages;
         }
+        /// <summary>
+        /// Sorts messages by two filters
+        /// </summary>
+        /// <param name="filter"> object that method sorts by</param>
+        /// <param name="sort"> order of sorting</param>
+        /// <returns> List of sorted messages</returns>
         public List<MimeMessage> SortBy(SortFilters filter,Order sort)
         {
             switch (filter)
@@ -53,6 +66,10 @@ namespace MailBox
             }
             return messages;
         }
+        /// <summary>
+        /// sorts list ascending
+        /// </summary>
+        /// <param name="filter"> object that method sorts by</param>
         private void SortAsc(SortFilters filter)
         {
             switch (filter)
@@ -68,6 +85,10 @@ namespace MailBox
                     break;
             }
         }
+        /// <summary>
+        /// sorts list descending
+        /// </summary>
+        /// <param name="filter"> object that method sorts by</param>
         private void SortDsc(SortFilters filter)
         {
             switch (filter)
@@ -86,6 +107,13 @@ namespace MailBox
                     break;
             }
         }
+        /// <summary>
+        /// searchs in messages for specified filter, applies it to filtred list and returns it
+        /// </summary>
+        /// <param name="part">part of mail message within the search will take place  </param>
+        /// <param name="search"> kind of search we want to filter</param>
+        /// <param name="filter">filter that the method will search by</param>
+        /// <returns></returns>
         public List<MimeMessage> FilterBy(MessageParts part,SearchFilters search,string filter)
         {
             switch (part)
@@ -101,6 +129,11 @@ namespace MailBox
             }
             return filtred;
         }
+        /// <summary>
+        /// Searches subjects by specfied filter
+        /// </summary>
+        /// <param name="search"></param>
+        /// <param name="filter"></param>
         private void FilterSubjectBy(SearchFilters search, string filter)
         {
             switch (search)
@@ -117,6 +150,11 @@ namespace MailBox
 
             }
         }
+        /// <summary>
+        /// Searches body by specfied filter
+        /// </summary>
+        /// <param name="search"></param>
+        /// <param name="filter"></param>
         private void FilterBodyBy(SearchFilters search, string filter)
         {
             switch (search)
@@ -137,6 +175,11 @@ namespace MailBox
                     break;
             }
         }
+        /// <summary>
+        /// Searches addreses by specfied filter
+        /// </summary>
+        /// <param name="search"></param>
+        /// <param name="filter"></param>
         private void FilterFromBy(SearchFilters search, string filter)
         {
             switch (search)
@@ -146,6 +189,11 @@ namespace MailBox
                     break;
             }
         }
+        /// <summary>
+        /// Searches dates by specfied filter
+        /// </summary>
+        /// <param name="search"></param>
+        /// <param name="filter"></param>
         private void FilterDateBy(SearchFilters search, string filter)
         {
             switch (search)
@@ -158,6 +206,11 @@ namespace MailBox
                     break;
             }
         }
+        /// <summary>
+        /// returns mailaddreses mailbox list as a single string
+        /// </summary>
+        /// <param name="addresses"></param>
+        /// <returns></returns>
         private string GetString(InternetAddressList addresses)
         {
             var froms = addresses.Mailboxes;

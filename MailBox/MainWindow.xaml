@@ -14,7 +14,7 @@
             <ColumnDefinition Width="457*"/>
         </Grid.ColumnDefinitions>
         <ProgressBar x:Name="bar" HorizontalAlignment="Left" Height="40" Margin="92,752,0,0" VerticalAlignment="Top" Width="1228" Minimum="0" Maximum="100" IsIndeterminate="True" Visibility="Visible" Panel.ZIndex="3" Grid.Column="2" Grid.ColumnSpan="2"/>
-        <Label x:Name="progress_label" Content="Ładowanie wiadomości" HorizontalAlignment="Center" Margin="448,731,376,10" VerticalAlignment="Center" Width="506" Height="92" FontSize="48" Visibility="Visible" Panel.ZIndex="4" Grid.Column="2" Grid.ColumnSpan="2"/>
+        <Label x:Name="progress_label" Content="Ładowanie wiadomości" HorizontalAlignment="Center" Margin="448,735,376,6" VerticalAlignment="Center" Width="506" Height="92" FontSize="48" Visibility="Visible" Panel.ZIndex="4" Grid.Column="2" Grid.ColumnSpan="2"/>
         <WebBrowser x:Name="browser" HorizontalAlignment="Left" Height="640" Margin="92,86,0,0" VerticalAlignment="Top" Width="1228" Panel.ZIndex="5" Visibility="Visible" Grid.Column="2" Grid.ColumnSpan="2"/>
         <local:MailList x:Name="mails" Grid.ColumnSpan="3" HorizontalAlignment="Left" Height="799" VerticalAlignment="Top" Width="285" Margin="0,24,0,0"/>
         <TextBlock x:Name="text" Grid.Column="2" HorizontalAlignment="Left" Margin="92,24,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" RenderTransformOrigin="0.51,1.719" Height="56" Width="1228" Grid.ColumnSpan="2"/>
