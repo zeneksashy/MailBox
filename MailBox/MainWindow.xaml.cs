@@ -21,11 +21,12 @@ using MailKit.Net.Imap;
 using MailKit.Search;
 using MailKit;
 using MailBox.Properties;
+using System.Text.RegularExpressions;
 //TODO
 //Show Attachments
 // Reply to
 // Send msg
-//Filtering -- need testing
+//Filtering -- need testing 
 //Sorting  -- done
 //Nicer look
 //Logout -- done 
@@ -43,9 +44,10 @@ namespace MailBox
         Imapfeatures features;
         string path;
         Client client = Client.GetInstance();
+        List<MimeMessage> original = new List<MimeMessage>();
         List<MimeMessage> msg = new List<MimeMessage>();
         ImapClient imap;
-        List<string> tempdirs = new List<string>();
+        HashSet<string> tempdirs = new HashSet<string>();
         IMailFolder inbox;
         ImapClient idleclient;
         public MainWindow()
@@ -76,6 +78,7 @@ namespace MailBox
         private void ChangeVisibilities()
         {
             features = new Imapfeatures(msg);
+            original = msg;
             msg = features.SortBy(SortFilters.Date, Order.DSC);
             mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
             progress_label.Dispatcher.Invoke(() => progress_label.Visibility = Visibility.Hidden);
@@ -167,13 +170,13 @@ namespace MailBox
             }
             Settings.Default.isSaved = true;
             Settings.Default.Save();
-            DeleteTemps();
+           // DeleteTemps();
         }
         private void DeleteTemps()
         {
             foreach (var dir in tempdirs)
             {
-                Directory.Delete(dir);
+                Directory.Delete(dir,true);
             }
         }
         public void FetchIdle()
@@ -225,6 +228,107 @@ namespace MailBox
             }
              msg= features.SortBy(sort, ord);
             mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
+        }
+
+        private void Date_Click(object sender, RoutedEventArgs e)
+        {
+            var menu = sender as MenuItem;
+            string date = Date.Text;
+            SearchFilters filter;
+            Enum.TryParse((string)menu.Header,out filter);
+            msg = features.FilterBy(MessageParts.Date, filter, date);
+            mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
+        }
+
+        private void Sbj_Contains_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+
+            if (e.Key==Key.Enter)
+            {
+                string searchfilter = (string)Subject_Contains.Header;
+                var parent = Subject_Contains.Parent as MenuItem;
+                string msgpart = parent.Header as string;
+                SearchFilters filter;
+                MessageParts part;
+                Enum.TryParse(msgpart, out part);
+                Enum.TryParse(searchfilter, out filter);
+                msg = features.FilterBy(part, filter, Sbj_Contains.Text);
+                mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
+            }        
+        }
+
+        private void Sbj_Lenght_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.Key==Key.Enter)
+            {
+                var txtbx = sender as TextBox;
+                var parent = txtbx.Parent as MenuItem;
+                parent = parent.Parent as MenuItem;
+                string searchfilter = parent.Header as string;
+                parent = parent.Parent as MenuItem;
+                string msgpart = parent.Header as string;
+                SearchFilters filter;
+                MessageParts part;
+                Enum.TryParse(msgpart, out part);
+                Enum.TryParse(searchfilter, out filter);
+                msg = features.FilterBy(part, filter, txtbx.Text);
+                mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
+            }  
+        }
+
+        private void Numeric_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
+        }
+
+        private void TextBox_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter)
+            {
+                var txtbx = sender as TextBox;
+                string searchfilter = (string)From_Contains.Header;
+                var parent = From_Contains.Parent as MenuItem;
+                string msgpart = parent.Header as string;
+                SearchFilters filter;
+                MessageParts part;
+                Enum.TryParse(msgpart, out part);
+                Enum.TryParse(searchfilter, out filter);
+                msg = features.FilterBy(part, filter, txtbx.Text);
+                mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
+            }          
+        }
+        private void Bdy_Contains_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+
+            if (e.Key == Key.Enter)
+            {
+                string searchfilter = (string)Body_Contains.Header;
+                var parent = Body_Contains.Parent as MenuItem;
+                string msgpart = parent.Header as string;
+                SearchFilters filter;
+                MessageParts part;
+                Enum.TryParse(msgpart, out part);
+                Enum.TryParse(searchfilter, out filter);
+                msg = features.FilterBy(part, filter, Bdy_Contains.Text);
+                mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
+            }
+        }
+        private void Reset_Click(object sender, RoutedEventArgs e)
+        {
+            msg = original;
+            features.ResetFilters();
+            mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            DeleteTemps();
+        }
+
+        private void HasAttachments_MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
     

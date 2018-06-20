@@ -33,6 +33,10 @@ namespace MailBox
             this.messages = messages;
             this.filtred = messages;
         }
+        public void ResetFilters()
+        {
+            filtred = messages;
+        }
         public List<MimeMessage> SortBy(SortFilters filter,Order sort)
         {
             switch (filter)
@@ -118,13 +122,15 @@ namespace MailBox
             switch (search)
             {
                 case SearchFilters.Contains:
-                    filtred = filtred.Where((m) => m.Body.ToString().Contains(filter)).ToList();
+                    filtred = filtred.Where((m) => m.TextBody != null ? m.TextBody.Contains(filter) : m.HtmlBody != null ? m.TextBody.Contains(filter) : false).ToList();
                     break;
                 case SearchFilters.Longer:
-                    filtred = filtred.Where((m) => m.Body.ToString().Length > Int32.Parse(filter)).ToList();
+                    filtred = filtred.Where((m) => m.TextBody!=null?m.TextBody.Length > Int32.Parse(filter):m.HtmlBody!=null? m.HtmlBody.Length > Int32.Parse(filter):false).ToList();
                     break;
                 case SearchFilters.Shorter:
-                    filtred = filtred.Where((m) => m.Body.ToString().Length < Int32.Parse(filter)).ToList();
+                    // filtred = filtred.Where((m) => m.TextBody.Length < Int32.Parse(filter)).ToList();
+                    filtred = filtred.Where((m) =>
+                         m.TextBody != null ? m.TextBody.Length < Int32.Parse(filter) : m.HtmlBody != null ? m.HtmlBody.Length < Int32.Parse(filter) : false).ToList();
                     break;
                 case SearchFilters.HasAttachments:
                     filtred = filtred.Where((m) => m.Attachments.LongCount()>0).ToList();
@@ -136,7 +142,7 @@ namespace MailBox
             switch (search)
             {
                 case SearchFilters.Contains:
-                    filtred = filtred.Where((m) =>GetString(m.From).Contains("filter")).ToList();
+                    filtred = filtred.Where((m) =>GetString(m.From).Contains(filter)).ToList();
                     break;
             }
         }

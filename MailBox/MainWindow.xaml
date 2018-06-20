@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MailBox"
         mc:Ignorable="d"
-        Title="MainWindow" Height="864" Width="1536" Loaded="Window_Loaded" ContentRendered="Window_ContentRendered" Closing="Window_Closing">
+        Title="MainWindow" Height="864" Width="1536" Loaded="Window_Loaded" ContentRendered="Window_ContentRendered" Closing="Window_Closing" Closed="Window_Closed">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10*"/>
@@ -18,8 +18,71 @@
         <WebBrowser x:Name="browser" HorizontalAlignment="Left" Height="640" Margin="92,86,0,0" VerticalAlignment="Top" Width="1228" Panel.ZIndex="5" Visibility="Visible" Grid.Column="2" Grid.ColumnSpan="2"/>
         <local:MailList x:Name="mails" Grid.ColumnSpan="3" HorizontalAlignment="Left" Height="799" VerticalAlignment="Top" Width="285" Margin="0,24,0,0"/>
         <TextBlock x:Name="text" Grid.Column="2" HorizontalAlignment="Left" Margin="92,24,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" RenderTransformOrigin="0.51,1.719" Height="56" Width="1228" Grid.ColumnSpan="2"/>
-        <Menu HorizontalAlignment="Left" Height="19" VerticalAlignment="Top" Width="1518" Grid.ColumnSpan="4">
+        <Menu HorizontalAlignment="Left" Height="24" VerticalAlignment="Top" Width="1518" Grid.ColumnSpan="4">
             <Button Content="Logout" Click="Button_Click"/>
+            <MenuItem Header="Filter">
+                <MenuItem Header="Subject">
+                    <MenuItem x:Name="Subject_Contains" Header="Contains" Width="150">
+                        <MenuItem Margin="0,0,-31,0">
+                            <MenuItem.Header>
+                                <TextBox x:Name="Sbj_Contains" Margin="5 0 0 0" Width="105" PreviewKeyDown="Sbj_Contains_PreviewKeyUp" />
+                            </MenuItem.Header>
+                        </MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="Longer">
+                        <MenuItem Margin="0,0,-31,0">
+                            <MenuItem.Header>
+                                <TextBox x:Name="Sbj_Longer" Margin="5 0 0 0" Width="105" PreviewKeyDown="Sbj_Lenght_PreviewKeyUp" PreviewTextInput="Numeric_PreviewTextInput"/>
+                            </MenuItem.Header>
+                        </MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="Shorter">
+                        <MenuItem Margin="0,0,-31,0">
+                            <MenuItem.Header>
+                                <TextBox x:Name="Sbj_Shorter" Margin="5 0 0 0" Width="30" PreviewKeyDown="Sbj_Lenght_PreviewKeyUp"  PreviewTextInput="Numeric_PreviewTextInput"/>
+                            </MenuItem.Header>
+                        </MenuItem>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="Date">
+                    <MenuItem Header="After" Click="Date_Click"/>
+                    <MenuItem Header="Before"/>
+                </MenuItem>
+                <MenuItem Header="From">
+                <MenuItem x:Name="From_Contains" Header="Contains" Width="150">
+                    <MenuItem Margin="0,0,-31,0">
+                        <MenuItem.Header>
+                                <TextBox  Margin="5 0 0 0" Width="70" PreviewKeyDown="TextBox_PreviewKeyUp" />
+                        </MenuItem.Header>
+                    </MenuItem>
+                </MenuItem>
+                </MenuItem>
+                <MenuItem Header="Body">
+                    <MenuItem x:Name="Body_Contains" Header="Contains">
+                        <MenuItem Margin="0,0,-31,0">
+                            <MenuItem.Header>
+                                <TextBox x:Name="Bdy_Contains" Margin="5 0 0 0" Width="105" PreviewKeyDown="Bdy_Contains_PreviewKeyUp" />
+                            </MenuItem.Header>
+                        </MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="Longer">
+                        <MenuItem Margin="0,0,-31,0">
+                            <MenuItem.Header>
+                                <TextBox x:Name="Bdy_Longer" Margin="5 0 0 0" Width="105" PreviewKeyDown="Sbj_Lenght_PreviewKeyUp" PreviewTextInput="Numeric_PreviewTextInput"/>
+                            </MenuItem.Header>
+                        </MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="Shorter">
+                        <MenuItem Margin="0,0,-31,0">
+                            <MenuItem.Header>
+                                <TextBox x:Name="Bdy_Shorter" Margin="5 0 0 0" Width="30" PreviewKeyDown="Sbj_Lenght_PreviewKeyUp"  PreviewTextInput="Numeric_PreviewTextInput"/>
+                            </MenuItem.Header>
+                        </MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="HasAttachments" Click="MenuItem_Click"></MenuItem>
+                </MenuItem>
+                <MenuItem Header="Reset" Click="Reset_Click"></MenuItem>
+            </MenuItem>
             <MenuItem Header="Sort By">
                 <MenuItem Header="Date">
                     <MenuItem Header="ASC" Click="MenuItem_Click"/>
@@ -34,6 +97,7 @@
                     <MenuItem Header="DSC" Click="MenuItem_Click"/>
                 </MenuItem>
             </MenuItem>
+            <DatePicker x:Name="Date" Text="6/20/2018"/>
         </Menu>
 
     </Grid>
