@@ -27,12 +27,12 @@
 
                 <DockPanel VerticalAlignment="Center" Margin="5">
                     <Label Content="TO:" Margin="0,0,25,0"/>
-                    <TextBox x:Name="toTextBox"/>
+                    <TextBox VerticalContentAlignment="Center" x:Name="toTextBox"/>
                 </DockPanel>
 
                 <DockPanel Grid.Row="1" VerticalAlignment="Center" Margin="5">
                     <Label Content="Subject:"/>
-                    <TextBox x:Name="subjectTextBox"/>
+                    <TextBox VerticalContentAlignment="Center" x:Name="subjectTextBox"/>
                 </DockPanel>
             </Grid>
 
@@ -45,12 +45,12 @@
 
                 <DockPanel VerticalAlignment="Center" Margin="5">
                     <Label Content="CC:" Margin="0,0,7,0"/>
-                    <TextBox x:Name="ccTextBox"/>
+                    <TextBox VerticalContentAlignment="Center" x:Name="ccTextBox"/>
                 </DockPanel>
 
                 <DockPanel Grid.Row="1" VerticalAlignment="Center" Margin="5">
                     <Label Content="BCC:"/>
-                    <TextBox x:Name="bccTextBox"/>
+                    <TextBox VerticalContentAlignment="Center" x:Name="bccTextBox"/>
                 </DockPanel>
             </Grid>
 

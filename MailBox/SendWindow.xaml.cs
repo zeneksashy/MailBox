@@ -82,9 +82,16 @@ namespace MailBox
             foreach (var item in _attachments)
                 mailMessage.Attachments.Add(new System.Net.Mail.Attachment(item));
 
-            mailMessage.CC.Add(ccTextBox.Text.Replace(';', ','));
-            mailMessage.Bcc.Add(bccTextBox.Text.Replace(';', ','));
-            mailMessage.To.Add(toTextBox.Text.Replace(';', ','));
+            if (!string.IsNullOrEmpty(ccTextBox.Text))
+                mailMessage.CC.Add(ccTextBox.Text.Replace(';', ','));
+
+            if (!string.IsNullOrEmpty(bccTextBox.Text))
+                mailMessage.Bcc.Add(bccTextBox.Text.Replace(';', ','));
+
+            if (!string.IsNullOrEmpty(toTextBox.Text))
+                mailMessage.To.Add(toTextBox.Text.Replace(';', ','));
+
+
             mailMessage.Subject = subjectTextBox.Text;
             mailMessage.Body = bodyTextBox.Text;
 
