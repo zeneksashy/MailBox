@@ -303,8 +303,7 @@ namespace MailBox
             this.Dispatcher.Invoke(() => panel.Visibility = Visibility.Hidden);
             this.Dispatcher.Invoke(() => scroller.Visibility = Visibility.Hidden);
 
-            SendWindow window = new SendWindow();
-            window.Show();
+            new Send.SendWindow().Show();
         }
 
         #endregion

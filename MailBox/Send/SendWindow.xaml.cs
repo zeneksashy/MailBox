@@ -17,7 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace MailBox
+namespace MailBox.Send
 {
     /// <summary>
     /// Interaction logic for SendWindow.xaml
@@ -47,6 +47,7 @@ namespace MailBox
             if (_openFileDialog.ShowDialog() == true)
             {
                 _attachments.Add(_openFileDialog.FileName);
+                attachments.Children.Add(new Attachment(_openFileDialog.SafeFileName));
             }
         }
 
@@ -118,3 +119,4 @@ namespace MailBox
         }
     }
 }
+
