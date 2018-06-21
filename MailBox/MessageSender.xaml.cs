@@ -15,6 +15,8 @@ using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.Net.Mail;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 
 namespace MailBox
 {
@@ -106,7 +108,13 @@ namespace MailBox
         }
         private void Send_Button(object sender, RoutedEventArgs e)
         {
+            ServicePointManager.ServerCertificateValidationCallback =
+    delegate (object s, X509Certificate certificate,
+             X509Chain chain, SslPolicyErrors sslPolicyErrors)
+    { return true; };
+
             var host = getSmtpHost();
+
             SmtpClient smtpClient = new SmtpClient(host, 587) { Credentials = new NetworkCredential(client.Email, client.Password), EnableSsl = true };
             var msg = CreateMessage();
             smtpClient.Send(msg);     
