@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MailBox"
-        xmlns:attachments="clr-namespace:MailBox"
         mc:Ignorable="d"
         Title="MainWindow" Height="864" Width="1536" Loaded="Window_Loaded" ContentRendered="Window_ContentRendered" Closing="Window_Closing" Closed="Window_Closed">
     <Grid>
@@ -14,12 +13,12 @@
             <ColumnDefinition Width="625*"/>
             <ColumnDefinition Width="0*"/>
         </Grid.ColumnDefinitions>
-        <ProgressBar x:Name="bar" HorizontalAlignment="Left" Height="40" Margin="92,752,-70,0" VerticalAlignment="Top" Width="1228" Minimum="0" Maximum="100" IsIndeterminate="True" Visibility="Hidden" Panel.ZIndex="3" Grid.Column="2" Grid.ColumnSpan="2"/>
-        <Label x:Name="progress_label" Content="Ładowanie wiadomości" HorizontalAlignment="Center" Margin="571,735,173,6" VerticalAlignment="Center" Width="506" Height="92" FontSize="48" Visibility="Hidden" Panel.ZIndex="4" Grid.Column="2"/>
+        <ProgressBar x:Name="bar" HorizontalAlignment="Left" Height="40" Margin="22,754,0,0" VerticalAlignment="Top" Width="1228" Minimum="0" Maximum="100" IsIndeterminate="True" Visibility="Visible" Panel.ZIndex="3" Grid.Column="2"/>
+        <Label x:Name="progress_label" Content="Ładowanie wiadomości" HorizontalAlignment="Center" Margin="385,735,359,6" VerticalAlignment="Center" Width="506" Height="92" FontSize="48" Visibility="Visible" Panel.ZIndex="4" Grid.Column="2"/>
         <WebBrowser x:Name="browser" HorizontalAlignment="Left" Height="640" Margin="7,95,0,0" VerticalAlignment="Top" Width="1228" Panel.ZIndex="5" Visibility="Visible" Grid.Column="2"/>
         <local:MailList x:Name="mails" Grid.ColumnSpan="3" HorizontalAlignment="Left" Height="799" VerticalAlignment="Top" Width="285" Margin="0,24,0,0"/>
         <TextBlock x:Name="text" Grid.Column="2" HorizontalAlignment="Left" Margin="12,24,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" RenderTransformOrigin="0.51,1.719" Height="56" Width="1223"></TextBlock>
-        <Button Content="Reply" Margin="1148,69,15,738" Grid.Column="2" FontSize="16" Click="Button_Click_1"/>
+        <Button Content="Reply" Margin="1148,64,15,738" Grid.Column="2" FontSize="16" Click="Button_Click_1"/>
         <Menu HorizontalAlignment="Left" Height="24" VerticalAlignment="Top" Width="1518" Grid.ColumnSpan="3">
             <Button Content="Logout" Click="Button_Click"/>
             <MenuItem Header="Filter">
@@ -101,11 +100,11 @@
             </MenuItem>
             <DatePicker x:Name="Date" Text="6/20/2018"/>
         </Menu>
-        <ScrollViewer x:Name="scroller" Grid.Column="2" Margin="12,726,10,0" HorizontalScrollBarVisibility="Auto">
+        <ScrollViewer x:Name="scroller" Grid.Column="2" Margin="12,726,10,0" HorizontalScrollBarVisibility="Auto" Visibility="Hidden">
             <StackPanel x:Name="panel" Background="DimGray" Height="91" Orientation="Horizontal" Width="1228">
             </StackPanel>
         </ScrollViewer>
-        <attachments:MessageSender Grid.Column="2" HorizontalAlignment="Left" Height="728" Margin="12,95,0,0" VerticalAlignment="Top" Width="1223"/>
+        <local:MessageSender Grid.Column="2" HorizontalAlignment="Left" Height="728" Margin="12,95,0,0" VerticalAlignment="Top" Width="1223"/>
 
     </Grid>
 </Window>

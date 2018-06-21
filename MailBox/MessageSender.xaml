@@ -13,9 +13,6 @@
         <TextBox x:Name="Subject" HorizontalAlignment="Left" Height="23" Margin="10,109,0,0" TextWrapping="Wrap" Text="Subject" VerticalAlignment="Top" Width="780" GotFocus="TextBox_GotFocus"/>
         <Canvas x:Name="canvas">
             <TextBox x:Name="Message" AcceptsReturn="True" SpellCheck.IsEnabled="True" Language="pl-PL" HorizontalAlignment="Left" Margin="0,0,0,0" TextWrapping="Wrap" Text="Message" Width="780" GotFocus="TextBox_GotFocus" Height="274" Canvas.Top="134" Canvas.Left="10"/>
-            <Border BorderThickness="1" BorderBrush="DimGray"  CornerRadius="0,8,0,8" Canvas.Left="20" Canvas.Top="380" Width="285">
-                <TextBlock Text="" Margin="5,0,1,2" />
-            </Border>
         </Canvas>
 
         <Button Content="Add Attachments" HorizontalAlignment="Left" Margin="10,413,0,0" VerticalAlignment="Top" Width="110" Click="Button_Click"/>

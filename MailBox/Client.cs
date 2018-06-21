@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net.Mail;
-using System.Runtime.Serialization;
 using MimeKit;
 namespace MailBox
 {
-    [DataContract]
     public class Client
     {
         public string Name { get; private set; }
@@ -24,14 +19,10 @@ namespace MailBox
             }
             return "Empty_Email";
         }
-        [DataMember]
         public string Email { get; set; }
-        [DataMember]
         public string Password { get; set; }
-        [DataMember]
         public string Host { get; set; }
         public int Port { get; set; }
-        [DataMember]
         public List<MimeMessage> mails = new List<MimeMessage>();
         private static readonly object locker = new object();
         private Client() { Port = 993; }

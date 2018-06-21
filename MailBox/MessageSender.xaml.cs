@@ -70,32 +70,41 @@ namespace MailBox
             border.Child = textblock;
             Canvas.SetTop(border, top);
             Canvas.SetLeft(border, left);
-            top -= 10;
+            top -= 25;
             canvas.Children.Add(border);
         }
         private MailMessage CreateMessage()
         {
             MailMessage ms = new MailMessage();
             ms.From = new MailAddress(client.Email);
+            if(attachments.Count>0)
             foreach (var item in attachments)
             {
                 ms.Attachments.Add(new System.Net.Mail.Attachment(item));
             }
-            var bcc = Splitted(UDW.Text);
-            foreach (var item in bcc)
-            {
-                ms.Bcc.Add(new MailAddress(item));
-            }
+            //if(UDW.Text!="Bcc" || UDW.Text != "")
+            //{
+            //    var bcc = Splitted(UDW.Text);
+            //    foreach (var item in bcc)
+            //    {
+            //        ms.Bcc.Add(new MailAddress(item));
+            //    }
+            //}
+           
             var to = Splitted(To.Text);
             foreach (var item in to)
             {
                 ms.To.Add(new MailAddress(item));
             }
-            var cc = Splitted(DW.Text);
-            foreach (var item in cc)
-            {
-                ms.CC.Add(new MailAddress(item));
-            }
+            //if (DW.Text != "Bc" || DW.Text != "")
+            //{
+            //    var cc = Splitted(DW.Text);
+            //    foreach (var item in cc)
+            //    {
+            //        ms.CC.Add(new MailAddress(item));
+            //    }
+            //}
+         
             ms.Body = Message.Text;
             return ms;
 
@@ -106,10 +115,15 @@ namespace MailBox
         }
         private void Send_Button(object sender, RoutedEventArgs e)
         {
+           //  Task.Run(()=>Send());
+            Send();
+        }
+        private void Send()
+        {
             var host = getSmtpHost();
-            SmtpClient smtpClient = new SmtpClient(host, 587) { Credentials = new NetworkCredential(client.Email, client.Password), EnableSsl = true };
+            SmtpClient smtpClient = new SmtpClient(host, 465) { UseDefaultCredentials = false, Credentials = new NetworkCredential(client.Email, client.Password), EnableSsl = true, Timeout = 100000 };
             var msg = CreateMessage();
-            smtpClient.Send(msg);     
+            smtpClient.Send(msg);
         }
         private string getSmtpHost()
         {
