@@ -85,6 +85,9 @@
     <Compile Include="MessageSender.xaml.cs">
       <DependentUpon>MessageSender.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SendWindow.xaml.cs">
+      <DependentUpon>SendWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Serialization.cs" />
     <Page Include="Attachment.xaml">
       <SubType>Designer</SubType>
@@ -119,6 +122,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="MessageSender.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SendWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
