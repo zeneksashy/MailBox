@@ -41,6 +41,7 @@ namespace MailBox
     /// </summary>
     public partial class MainWindow : Window
     {
+        #region private fileds
         Imapfeatures features;
         string path;
         Client client = Client.GetInstance();
@@ -50,6 +51,8 @@ namespace MailBox
         HashSet<string> tempdirs = new HashSet<string>();
         IMailFolder inbox;
         ImapClient idleclient;
+        #endregion
+
         /// <summary>
         /// The main constructor of a window,Initializes default path for mails, creates imap clients and connects with server
         ///
@@ -69,22 +72,8 @@ namespace MailBox
             inbox.Open(FolderAccess.ReadOnly);
             imap.IdleAsync(new CancellationToken());
         }
-        /// <summary>
-        /// fetches all the messages from inbox and add them to msg list
-        /// </summary>
-        private void LoadMessages()
-        {
-            foreach (var item in Fetch(inbox))
-            {
-                client.mails.Add(item);
-                msg.Add(item);
-            }
-           
-            ChangeVisibilities();
-        }
-        /// <summary>
-        /// After Loading mails to list it sorts it , hides progres bar and shows browser with mailist
-        /// </summary>
+      
+        #region private methods
         private void ChangeVisibilities()
         {
             features = new Imapfeatures(msg);
@@ -94,112 +83,9 @@ namespace MailBox
             progress_label.Dispatcher.Invoke(() => progress_label.Visibility = Visibility.Hidden);
             bar.Dispatcher.Invoke(() => bar.Visibility = Visibility.Hidden);
             browser.Dispatcher.Invoke(() => browser.Visibility = Visibility.Visible);
+            scroller.Dispatcher.Invoke(() => scroller.Visibility = Visibility.Visible);
         }
-        /// <summary>
-        /// Load mails from path and adds them to msg list
-        /// </summary>
-        /// <param name="path"> path of a mails </param>
-        private void LoadMessages(string path)
-        {
-            var files = Directory.GetFiles(path);
-            foreach (var file in files)
-            {
-                msg.Add(MimeMessage.Load(file));
-            }
-            ChangeVisibilities();
-        }
-        /// <summary>
-        /// fetches all messages in inbox
-        /// </summary>
-        /// <param name="inbox"> inbox</param>
-        /// <returns> retruns abstract list with mails </returns>
-        IEnumerable<MimeMessage> Fetch(IMailFolder inbox)
-        {    
-            for (int i = 0; i <inbox.Count; i++)
-            {           
-                yield return inbox.GetMessage(i);
-            }
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            var previous = App.Current.MainWindow;
-            if(previous!=this)
-            {
-                App.Current.MainWindow = this;
-                previous.Close();
-            }       
-        }
-        /// <summary>
-        /// Shows a message in a browser
-        /// </summary>
-        /// <param name="uid">uid of message which we want to show</param>
-        public void OpenInBrowser(int uid)
-        {
-            panel.Children.Clear();
-            var message = msg[uid-1];
-            StringBuilder sb = new StringBuilder();
-            var from = getMailbox(message.From.Mailboxes);
-            var to = getMailbox(message.To.Mailboxes);
-            var date = message.Date;
-            var subject = message.Subject;
-            foreach (var adr in from)
-            {
-                sb.Append("OD: ").Append(adr).Append(" ");
-            }
-            foreach (var adr in to)
-            {
-                sb.Append("DO: ").Append(adr).Append(" ");
-            }
-            sb.AppendLine().Append("Temat: ").Append(subject).Append(" Data: ").Append(date);
-            var tmp = System.IO.Path.Combine(path, "msg" + uid);
-            var htmlpreview = new HtmlPreviewVisitor(tmp);
-            Directory.CreateDirectory(tmp);
-            tempdirs.Add(tmp);
-            message.Accept(htmlpreview);
-            text.Text = sb.ToString();
-            ShowAttachments(message);
-            browser.NavigateToString(htmlpreview.HtmlBody);
-        }
-        private void ShowAttachments(MimeMessage msg)
-        {
-            var attachments = msg.Attachments;
-            int i = 0;
-            foreach (var attachment in attachments)
-            {
-                var userctrl = new Attachment();
-                userctrl.Cursor = Cursors.Hand;
-                userctrl.Attach = attachment;
-                userctrl.PreviewMouseLeftButtonDown += UserCtrl_PreviewMouseDown;
-                userctrl.Uid = i.ToString();
-                userctrl.ChangeLabelName(attachment.ContentDisposition.FileName);
-                panel.Children.Add(userctrl);
-                i++;
-            }
-        }
-        private void Window_ContentRendered(object sender, EventArgs e)
-        {
-            if(!Settings.Default.isSaved)
-            Task.Run(()=> LoadMessages());
-            else
-            {
-                Task.Run(() => LoadMessages(path));
-            }
-        }
-        /// <summary>
-        /// Used to get mailboxes from "TO" and "From" list and return them as string
-        /// </summary>
-        /// <param name="addresses"> list of mailboxes</param>
-        /// <returns>list of mialboxes as string</returns>
-        private List<string> getMailbox(IEnumerable<MailboxAddress> addresses)
-        {
-            var listofadrs = new List<string>();
-            foreach (var addres in addresses)
-            {
-                listofadrs.Add(addres.Address);
-            }
-            return listofadrs;
-        }
+        #region event handlers
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             imap.Disconnect(true);
@@ -217,26 +103,26 @@ namespace MailBox
             }
             Settings.Default.isSaved = true;
             Settings.Default.Save();
-           // DeleteTemps();
+            // DeleteTemps();
         }
-        /// <summary>
-        /// Deletes temporary files from appdata directory
-        /// </summary>
-        private void DeleteTemps()
+        
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            foreach (var dir in tempdirs)
+            var previous = App.Current.MainWindow;
+            if (previous != this)
             {
-                Directory.Delete(dir,true);
+                App.Current.MainWindow = this;
+                previous.Close();
             }
         }
-        public void FetchIdle()
-        {     
-             inbox = imap.Inbox;
-             inbox.Open(FolderAccess.ReadOnly);
-            int count = msg.Count;
-            for (int i = count; i < inbox.Count; i++)
+
+        private void Window_ContentRendered(object sender, EventArgs e)
+        {
+            if (!Settings.Default.isSaved)
+                Task.Run(() => LoadMessages());
+            else
             {
-                msg.Add(inbox.GetMessage(i));
+                Task.Run(() => LoadMessages(path));
             }
         }
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -262,7 +148,7 @@ namespace MailBox
             SortFilters sort = SortFilters.Date;
             foreach (var order in orders)
             {
-                if((string)menu.Header == order)
+                if ((string)menu.Header == order)
                 {
                     Enum.TryParse(order, out ord);
                     break;
@@ -276,7 +162,7 @@ namespace MailBox
                     break;
                 }
             }
-             msg= features.SortBy(sort, ord);
+            msg = features.SortBy(sort, ord);
             mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
         }
 
@@ -285,7 +171,7 @@ namespace MailBox
             var menu = sender as MenuItem;
             string date = Date.Text;
             SearchFilters filter;
-            Enum.TryParse((string)menu.Header,out filter);
+            Enum.TryParse((string)menu.Header, out filter);
             msg = features.FilterBy(MessageParts.Date, filter, date);
             mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
         }
@@ -293,7 +179,7 @@ namespace MailBox
         private void Sbj_Contains_PreviewKeyUp(object sender, KeyEventArgs e)
         {
 
-            if (e.Key==Key.Enter)
+            if (e.Key == Key.Enter)
             {
                 string searchfilter = (string)Subject_Contains.Header;
                 var parent = Subject_Contains.Parent as MenuItem;
@@ -304,12 +190,12 @@ namespace MailBox
                 Enum.TryParse(searchfilter, out filter);
                 msg = features.FilterBy(part, filter, Sbj_Contains.Text);
                 mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
-            }        
+            }
         }
 
         private void Sbj_Lenght_PreviewKeyUp(object sender, KeyEventArgs e)
         {
-            if(e.Key==Key.Enter)
+            if (e.Key == Key.Enter)
             {
                 var txtbx = sender as TextBox;
                 var parent = txtbx.Parent as MenuItem;
@@ -323,7 +209,7 @@ namespace MailBox
                 Enum.TryParse(searchfilter, out filter);
                 msg = features.FilterBy(part, filter, txtbx.Text);
                 mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
-            }  
+            }
         }
 
         private void Numeric_PreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -334,7 +220,7 @@ namespace MailBox
 
         private void TextBox_PreviewKeyUp(object sender, KeyEventArgs e)
         {
-            if(e.Key == Key.Enter)
+            if (e.Key == Key.Enter)
             {
                 var txtbx = sender as TextBox;
                 string searchfilter = (string)From_Contains.Header;
@@ -346,7 +232,7 @@ namespace MailBox
                 Enum.TryParse(searchfilter, out filter);
                 msg = features.FilterBy(part, filter, txtbx.Text);
                 mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
-            }          
+            }
         }
         private void Bdy_Contains_PreviewKeyUp(object sender, KeyEventArgs e)
         {
@@ -378,7 +264,7 @@ namespace MailBox
 
         private void HasAttachments_MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            msg = features.FilterBy(MessageParts.Body, SearchFilters.HasAttachments,"");
+            msg = features.FilterBy(MessageParts.Body, SearchFilters.HasAttachments, "");
             mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
         }
 
@@ -388,23 +274,23 @@ namespace MailBox
             var attachment = userctrl.Attach;
             int uid = int.Parse(userctrl.Uid);
             var tmpdir = System.IO.Path.Combine(path, "attach" + uid);//powinno byc w folderze z numerem wiadomosci 
-            
+
             if (!Directory.Exists(tmpdir))
                 Directory.CreateDirectory(tmpdir);
-            var attachmentpath = System.IO.Path.Combine(path, "attach" + uid) +"\\"+ attachment.ContentDisposition.FileName;
-            using(var stream = File.Create(attachmentpath))
-            if (attachment is MessagePart)
-            {
-                var part = (MessagePart)attachment;
+            var attachmentpath = System.IO.Path.Combine(path, "attach" + uid) + "\\" + attachment.ContentDisposition.FileName;
+            using (var stream = File.Create(attachmentpath))
+                if (attachment is MessagePart)
+                {
+                    var part = (MessagePart)attachment;
 
-                part.Message.WriteTo(stream);
-            }
-            else
-            {
-                var part = (MimePart)attachment;
+                    part.Message.WriteTo(stream);
+                }
+                else
+                {
+                    var part = (MimePart)attachment;
 
                     part.Content.DecodeTo(stream);
-            }
+                }
             System.Diagnostics.Process.Start(attachmentpath);
         }
 
@@ -416,6 +302,135 @@ namespace MailBox
 
 
         }
+
+        #endregion
+        #region imap methods
+        /// <summary>
+        /// fetches all the messages from inbox and add them to msg list
+        /// </summary>
+        private void LoadMessages()
+        {
+            foreach (var item in Fetch(inbox))
+            {
+                client.mails.Add(item);
+                msg.Add(item);
+            }
+
+            ChangeVisibilities();
+        }
+        /// <summary>
+        /// Load mails from path and adds them to msg list
+        /// </summary>
+        /// <param name="path"> path of a mails </param>
+        private void LoadMessages(string path)
+        {
+            var files = Directory.GetFiles(path);
+            foreach (var file in files)
+            {
+                msg.Add(MimeMessage.Load(file));
+            }
+            ChangeVisibilities();
+        }
+
+        /// <summary>
+        /// fetches all messages in inbox
+        /// </summary>
+        /// <param name="inbox"> inbox</param>
+        /// <returns> retruns abstract list with mails </returns>
+        IEnumerable<MimeMessage> Fetch(IMailFolder inbox)
+        {
+            for (int i = 0; i < inbox.Count; i++)
+            {
+                yield return inbox.GetMessage(i);
+            }
+        }
+        /// <summary>
+        /// Used to get mailboxes from "TO" and "From" list and return them as string
+        /// </summary>
+        /// <param name="addresses"> list of mailboxes</param>
+        /// <returns>list of mialboxes as string</returns>
+        private List<string> getMailbox(IEnumerable<MailboxAddress> addresses)
+        {
+            var listofadrs = new List<string>();
+            foreach (var addres in addresses)
+            {
+                listofadrs.Add(addres.Address);
+            }
+            return listofadrs;
+        }
+        #endregion
+        private void ShowAttachments(MimeMessage msg)
+        {
+            var attachments = msg.Attachments;
+            int i = 0;
+            foreach (var attachment in attachments)
+            {
+                var userctrl = new Attachment();
+                userctrl.Cursor = Cursors.Hand;
+                userctrl.Attach = attachment;
+                userctrl.PreviewMouseLeftButtonDown += UserCtrl_PreviewMouseDown;
+                userctrl.Uid = i.ToString();
+                userctrl.ChangeLabelName(attachment.ContentDisposition.FileName);
+                panel.Children.Add(userctrl);
+                i++;
+            }
+        }   
+       
+        /// <summary>
+        /// Deletes temporary files from appdata directory
+        /// </summary>
+        private void DeleteTemps()
+        {
+            foreach (var dir in tempdirs)
+            {
+                Directory.Delete(dir,true);
+            }
+        }  
+        #endregion
+        #region public methods
+        public void FetchIdle()
+        {
+            inbox = imap.Inbox;
+            inbox.Open(FolderAccess.ReadOnly);
+            int count = msg.Count;
+            for (int i = count; i < inbox.Count; i++)
+            {
+                msg.Add(inbox.GetMessage(i));
+            }
+        }
+        /// <summary>
+        /// Shows a message in a browser
+        /// </summary>
+        /// <param name="uid">uid of message which we want to show</param>
+        public void OpenInBrowser(int uid)
+        {
+            panel.Children.Clear();
+            var message = msg[uid - 1];
+            StringBuilder sb = new StringBuilder();
+            var from = getMailbox(message.From.Mailboxes);
+            var to = getMailbox(message.To.Mailboxes);
+            var date = message.Date;
+            var subject = message.Subject;
+            foreach (var adr in from)
+            {
+                sb.Append("OD: ").Append(adr).Append(" ");
+            }
+            foreach (var adr in to)
+            {
+                sb.Append("DO: ").Append(adr).Append(" ");
+            }
+            sb.AppendLine().Append("Temat: ").Append(subject).Append(" Data: ").Append(date);
+            var tmp = System.IO.Path.Combine(path, "msg" + uid);
+            var htmlpreview = new HtmlPreviewVisitor(tmp);
+            Directory.CreateDirectory(tmp);
+            tempdirs.Add(tmp);
+            message.Accept(htmlpreview);
+            text.Text = sb.ToString();
+            ShowAttachments(message);
+            browser.NavigateToString(htmlpreview.HtmlBody);
+        }
+        #endregion
+
     }
     
 }

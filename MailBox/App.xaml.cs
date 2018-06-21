@@ -18,8 +18,6 @@ namespace MailBox
         {
             if (Settings.Default.isAuthenticated)
             {
-              //  Settings.Default.isSaved = false;
-             //   Settings.Default.Save();
                 var cl = Client.GetInstance();
                 cl.Email = Settings.Default.mail;
                 cl.Password = Settings.Default.pass;
