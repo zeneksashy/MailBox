@@ -15,6 +15,8 @@ using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.Net.Mail;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 
 namespace MailBox
 {
@@ -70,41 +72,32 @@ namespace MailBox
             border.Child = textblock;
             Canvas.SetTop(border, top);
             Canvas.SetLeft(border, left);
-            top -= 25;
+            top -= 10;
             canvas.Children.Add(border);
         }
         private MailMessage CreateMessage()
         {
             MailMessage ms = new MailMessage();
             ms.From = new MailAddress(client.Email);
-            if(attachments.Count>0)
             foreach (var item in attachments)
             {
                 ms.Attachments.Add(new System.Net.Mail.Attachment(item));
             }
-            //if(UDW.Text!="Bcc" || UDW.Text != "")
-            //{
-            //    var bcc = Splitted(UDW.Text);
-            //    foreach (var item in bcc)
-            //    {
-            //        ms.Bcc.Add(new MailAddress(item));
-            //    }
-            //}
-           
+            var bcc = Splitted(UDW.Text);
+            foreach (var item in bcc)
+            {
+                ms.Bcc.Add(new MailAddress(item));
+            }
             var to = Splitted(To.Text);
             foreach (var item in to)
             {
                 ms.To.Add(new MailAddress(item));
             }
-            //if (DW.Text != "Bc" || DW.Text != "")
-            //{
-            //    var cc = Splitted(DW.Text);
-            //    foreach (var item in cc)
-            //    {
-            //        ms.CC.Add(new MailAddress(item));
-            //    }
-            //}
-         
+            var cc = Splitted(DW.Text);
+            foreach (var item in cc)
+            {
+                ms.CC.Add(new MailAddress(item));
+            }
             ms.Body = Message.Text;
             return ms;
 
@@ -115,15 +108,16 @@ namespace MailBox
         }
         private void Send_Button(object sender, RoutedEventArgs e)
         {
-           //  Task.Run(()=>Send());
-            Send();
-        }
-        private void Send()
-        {
+            ServicePointManager.ServerCertificateValidationCallback =
+    delegate (object s, X509Certificate certificate,
+             X509Chain chain, SslPolicyErrors sslPolicyErrors)
+    { return true; };
+
             var host = getSmtpHost();
-            SmtpClient smtpClient = new SmtpClient(host, 465) { UseDefaultCredentials = false, Credentials = new NetworkCredential(client.Email, client.Password), EnableSsl = true, Timeout = 100000 };
+
+            SmtpClient smtpClient = new SmtpClient(host, 587) { Credentials = new NetworkCredential(client.Email, client.Password), EnableSsl = true };
             var msg = CreateMessage();
-            smtpClient.Send(msg);
+            smtpClient.Send(msg);     
         }
         private string getSmtpHost()
         {
