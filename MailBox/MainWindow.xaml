@@ -104,7 +104,6 @@
             <StackPanel x:Name="panel" Background="DimGray" Height="91" Orientation="Horizontal" Width="1228">
             </StackPanel>
         </ScrollViewer>
-        <local:MessageSender Grid.Column="2" HorizontalAlignment="Left" Height="728" Margin="12,95,0,0" VerticalAlignment="Top" Width="1223"/>
 
     </Grid>
 </Window>

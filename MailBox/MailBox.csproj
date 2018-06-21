@@ -81,10 +81,9 @@
     <Compile Include="MailList.xaml.cs">
       <DependentUpon>MailList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MessageSender.xaml.cs">
-      <DependentUpon>MessageSender.xaml</DependentUpon>
+    <Compile Include="SendWindow.xaml.cs">
+      <DependentUpon>SendWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Serialization.cs" />
     <Page Include="Attachment.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -117,13 +116,9 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="MessageSender.xaml">
+    <Page Include="SendWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\Generic.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -156,6 +151,8 @@
   <ItemGroup>
     <Resource Include="images\attach.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Themes\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
