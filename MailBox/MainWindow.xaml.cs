@@ -23,7 +23,7 @@ using MailKit;
 using MailBox.Properties;
 using System.Text.RegularExpressions;
 //TODO
-//Show Attachments
+//Show Attachments --  almost done, saving left -- done
 // Reply to
 // Send msg
 //Filtering -- need testing 
@@ -136,6 +136,7 @@ namespace MailBox
         /// <param name="uid">uid of message which we want to show</param>
         public void OpenInBrowser(int uid)
         {
+            panel.Children.Clear();
             var message = msg[uid-1];
             StringBuilder sb = new StringBuilder();
             var from = getMailbox(message.From.Mailboxes);
@@ -157,7 +158,24 @@ namespace MailBox
             tempdirs.Add(tmp);
             message.Accept(htmlpreview);
             text.Text = sb.ToString();
+            ShowAttachments(message);
             browser.NavigateToString(htmlpreview.HtmlBody);
+        }
+        private void ShowAttachments(MimeMessage msg)
+        {
+            var attachments = msg.Attachments;
+            int i = 0;
+            foreach (var attachment in attachments)
+            {
+                var userctrl = new Attachment();
+                userctrl.Cursor = Cursors.Hand;
+                userctrl.Attach = attachment;
+                userctrl.PreviewMouseLeftButtonDown += UserCtrl_PreviewMouseDown;
+                userctrl.Uid = i.ToString();
+                userctrl.ChangeLabelName(attachment.ContentDisposition.FileName);
+                panel.Children.Add(userctrl);
+                i++;
+            }
         }
         private void Window_ContentRendered(object sender, EventArgs e)
         {
@@ -360,7 +378,30 @@ namespace MailBox
 
         private void HasAttachments_MenuItem_Click(object sender, RoutedEventArgs e)
         {
+            msg = features.FilterBy(MessageParts.Body, SearchFilters.HasAttachments,"");
+            mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
+        }
 
+        private void UserCtrl_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var userctrl = sender as Attachment;
+            var attachment = userctrl.Attach;
+            int uid = int.Parse(userctrl.Uid);
+            var attachmentpath = System.IO.Path.Combine(path, "msg" + uid) + attachment.ContentDisposition.FileName;
+            using(var stream = File.Create(attachmentpath))
+            if (attachment is MessagePart)
+            {
+                var part = (MessagePart)attachment;
+
+                part.Message.WriteTo(stream);
+            }
+            else
+            {
+                var part = (MimePart)attachment;
+
+                    part.Content.DecodeTo(stream);
+            }
+            System.Diagnostics.Process.Start(attachmentpath);
         }
     }
     

@@ -68,6 +68,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="attachment.cs" />
+    <Compile Include="Attachment.xaml.cs">
+      <DependentUpon>Attachment.xaml</DependentUpon>
+    </Compile>
     <Compile Include="HostCHange.xaml.cs">
       <DependentUpon>HostCHange.xaml</DependentUpon>
     </Compile>
@@ -79,6 +83,10 @@
       <DependentUpon>MailList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Serialization.cs" />
+    <Page Include="Attachment.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="HostCHange.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -138,6 +146,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\attach.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

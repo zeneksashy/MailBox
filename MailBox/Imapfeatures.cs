@@ -7,18 +7,30 @@ using MailKit.Net.Imap;
 using MimeKit;
 namespace MailBox
 {
+    /// <summary>
+    /// parts of message that message should be sorted by
+    /// </summary>
     enum SortFilters
     {
         Subject=0,Date=1,From=2
     }
+    /// <summary>
+    /// message parts that message should be filtred by
+    /// </summary>
     enum MessageParts
     {
         Subject=0,Body=1,Attachments=2,From=4,Date=8
     }
+    /// <summary>
+    /// filters that can be applied to filtring
+    /// </summary>
     enum SearchFilters
     {
         After=0,Before=1,Contains=2,Longer=4,Shorter=8,Send=16,From=32,HasAttachments=64
     }
+    /// <summary>
+    /// Types of order that should be taken while sorting
+    /// </summary>
     enum Order
     {
         ASC =0, DSC = 1
