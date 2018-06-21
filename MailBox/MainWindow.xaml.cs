@@ -83,7 +83,7 @@ namespace MailBox
             ChangeVisibilities();
         }
         /// <summary>
-        /// After Loading mails to list it sorts it , hide progres bar and show browser with mailist
+        /// After Loading mails to list it sorts it , hides progres bar and shows browser with mailist
         /// </summary>
         private void ChangeVisibilities()
         {
@@ -387,7 +387,11 @@ namespace MailBox
             var userctrl = sender as Attachment;
             var attachment = userctrl.Attach;
             int uid = int.Parse(userctrl.Uid);
-            var attachmentpath = System.IO.Path.Combine(path, "msg" + uid) + attachment.ContentDisposition.FileName;
+            var tmpdir = System.IO.Path.Combine(path, "attach" + uid);//powinno byc w folderze z numerem wiadomosci 
+            
+            if (!Directory.Exists(tmpdir))
+                Directory.CreateDirectory(tmpdir);
+            var attachmentpath = System.IO.Path.Combine(path, "attach" + uid) +"\\"+ attachment.ContentDisposition.FileName;
             using(var stream = File.Create(attachmentpath))
             if (attachment is MessagePart)
             {
@@ -402,6 +406,15 @@ namespace MailBox
                     part.Content.DecodeTo(stream);
             }
             System.Diagnostics.Process.Start(attachmentpath);
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            this.Dispatcher.Invoke(() => browser.Visibility = Visibility.Hidden);
+            this.Dispatcher.Invoke(() => panel.Visibility = Visibility.Hidden);
+            this.Dispatcher.Invoke(() => scroller.Visibility = Visibility.Hidden);
+
+
         }
     }
     
