@@ -50,7 +50,8 @@ namespace MailBox
         ImapClient imap;
         HashSet<string> tempdirs = new HashSet<string>();
         IMailFolder inbox;
-        ImapClient idleclient;
+        ImapIdle idle;
+
         #endregion
 
         /// <summary>
@@ -58,32 +59,33 @@ namespace MailBox
         ///
         /// </summary>
         public MainWindow()
-        {
+        {          
             InitializeComponent();
             path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             path +=@"\"+client.setName()+@"\mails";
             imap = new ImapClient();
-            idleclient= new ImapClient();
-            idleclient.Connect(client.Host, client.Port, true);
-            idleclient.Authenticate(client.Email, client.Password);
             imap.Connect(client.Host, client.Port, true);
             imap.Authenticate(client.Email, client.Password);         
             inbox = imap.Inbox;
             inbox.Open(FolderAccess.ReadOnly);
-            imap.IdleAsync(new CancellationToken());
+            idle = new ImapIdle(inbox.Count);
         }
       
         #region private methods
         private void ChangeVisibilities()
         {
-            features = new Imapfeatures(msg);
-            original = msg;
-            msg = features.SortBy(SortFilters.Date, Order.DSC);
-            mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
+            ShowMessages();
             progress_label.Dispatcher.Invoke(() => progress_label.Visibility = Visibility.Hidden);
             bar.Dispatcher.Invoke(() => bar.Visibility = Visibility.Hidden);
             browser.Dispatcher.Invoke(() => browser.Visibility = Visibility.Visible);
             scroller.Dispatcher.Invoke(() => scroller.Visibility = Visibility.Visible);
+        }
+        private void ShowMessages()
+        {
+            features = new Imapfeatures(msg);
+            original = msg;
+            msg = features.SortBy(SortFilters.Date, Order.DSC);
+            mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
         }
         #region event handlers
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -260,6 +262,7 @@ namespace MailBox
         private void Window_Closed(object sender, EventArgs e)
         {
             DeleteTemps();
+            idle.Finish();
         }
 
         private void HasAttachments_MenuItem_Click(object sender, RoutedEventArgs e)
@@ -304,6 +307,7 @@ namespace MailBox
         }
 
         #endregion
+
         #region imap methods
         /// <summary>
         /// fetches all the messages from inbox and add them to msg list
@@ -388,6 +392,11 @@ namespace MailBox
         }  
         #endregion
         #region public methods
+        public void AddToList(MimeMessage message)
+        {
+            msg.Add(message);
+            ShowMessages();         
+        }
         public void FetchIdle()
         {
             inbox = imap.Inbox;
