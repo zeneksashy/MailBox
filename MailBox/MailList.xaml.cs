@@ -91,7 +91,6 @@ namespace MailBox
         public void ShowMessageList(List<MimeMessage> messages)
         {
             panel.Children.Clear();
-
             int i = 1;
             foreach (var msg in messages)
             {
@@ -108,13 +107,11 @@ namespace MailBox
                 panel.Children.Add(button);
                 i++;
             }
-
         }
         public void NewMessage(MimeMessage message)
         {
 
         }
-      
         private string Splitted(string str)
         {
             var split= str.Split();

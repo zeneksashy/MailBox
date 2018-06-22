@@ -48,6 +48,8 @@ namespace MailBox
         Imapfeatures features;
         string path;
         Client client = Client.GetInstance();
+        List<Message> messages = new List<Message>();
+        List<Message> originial_2 = new List<Message>();
         List<MimeMessage> original = new List<MimeMessage>();
         List<MimeMessage> msg = new List<MimeMessage>();
         ImapClient imap;
@@ -72,6 +74,10 @@ namespace MailBox
             inbox = imap.Inbox;
             inbox.Open(FolderAccess.ReadOnly);
             idle = new ImapIdle(inbox.Count);
+            foreach (var uid in inbox.Search(SearchQuery.NotSeen))
+            {
+                var message = inbox.GetMessage(uid);
+            }
         }
       
         #region private methods
@@ -108,7 +114,6 @@ namespace MailBox
             }
             Settings.Default.isSaved = true;
             Settings.Default.Save();
-            // DeleteTemps();
         }
         
         private void Window_Loaded(object sender, RoutedEventArgs e)
