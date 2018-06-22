@@ -13,8 +13,9 @@ namespace MailBox
     {
         ImapClient imapClient;
         ImapClient questClient;
-        object locker = new object();
+        readonly object locker = new object();
         Client client = Client.GetInstance();
+        MainWindow window;
         CancellationTokenSource done = new CancellationTokenSource() ;
         int count;
         public ImapIdle(int count)
@@ -24,6 +25,7 @@ namespace MailBox
             this.count = count;
             SetClient(questClient);
             SetClient(imapClient);
+            window = App.Current.MainWindow as MainWindow;
             imapClient.Inbox.CountChanged += Inbox_CountChanged;
             Task.Run(() => imapClient.Idle(done.Token));          
         }
@@ -39,14 +41,11 @@ namespace MailBox
         {
             var folder = (ImapFolder)sender;
             SetClient(questClient);
+            if(count<folder.Count)
             for (int i = count; i < folder.Count; i++)
             {
                 var msg =  questClient.Inbox.GetMessage(i);
-                //Exception -- Nie mozna pobrac z innego watku
-                //******************************
-                //MainWindow win;
-                //win = App.Current.MainWindow.Dispatcher.Invoke(()=> win = App.Current.MainWindow as MainWindow);
-                //win.AddToList(msg);
+                window.Dispatcher.Invoke(() => window.AddToList(msg));
             }
             lock(locker)
             count = folder.Count;

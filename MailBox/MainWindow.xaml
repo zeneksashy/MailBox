@@ -18,7 +18,8 @@
         <WebBrowser x:Name="browser" HorizontalAlignment="Left" Height="640" Margin="7,95,0,0" VerticalAlignment="Top" Width="1228" Panel.ZIndex="5" Visibility="Visible" Grid.Column="2"/>
         <local:MailList x:Name="mails" Grid.ColumnSpan="3" HorizontalAlignment="Left" Height="799" VerticalAlignment="Top" Width="285" Margin="0,24,0,0"/>
         <TextBlock x:Name="text" Grid.Column="2" HorizontalAlignment="Left" Margin="12,24,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" RenderTransformOrigin="0.51,1.719" Height="56" Width="1223"></TextBlock>
-        <Button Content="Reply" Margin="1148,64,15,738" Grid.Column="2" FontSize="16" Click="Button_Click_1"/>
+        <Button x:Name="reply_btn" Content="Reply" Margin="1148,64,15,738" Grid.Column="2" FontSize="16" Click="Button_Click_1" Visibility="Visible"/>
+        <Button x:Name="send_btn" Content="Send" Margin="1061,64,102,738" Grid.Column="2" FontSize="16" Click="Button_Click_1" Visibility="Visible"/>
         <Menu HorizontalAlignment="Left" Height="24" VerticalAlignment="Top" Width="1518" Grid.ColumnSpan="3">
             <Button Content="Logout" Click="Button_Click"/>
             <MenuItem Header="Filter">

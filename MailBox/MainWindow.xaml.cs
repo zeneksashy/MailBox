@@ -24,15 +24,18 @@ using MailBox.Properties;
 using System.Text.RegularExpressions;
 //TODO
 //Show Attachments --  almost done, saving left -- done
-// Reply to
-// Send msg
+// Reply to -- done
+// Send msg -- done
 //Filtering -- need testing 
 //Sorting  -- done
 //Nicer look
 //Logout -- done 
 //Changing hosts -- done
-//imap idle
+//imap idle -- almost done, 
 //inbox add ?
+//message deleting
+//message updating
+
 
 namespace MailBox
 {
@@ -437,6 +440,7 @@ namespace MailBox
             text.Text = sb.ToString();
             ShowAttachments(message);
             browser.NavigateToString(htmlpreview.HtmlBody);
+            reply_btn.Visibility = Visibility.Visible;
         }
         #endregion
 

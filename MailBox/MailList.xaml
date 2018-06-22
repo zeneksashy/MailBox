@@ -9,6 +9,13 @@
     <Grid Margin="0,0,0,0">
         <ScrollViewer Width="280">
         <StackPanel x:Name="panel" Width="280" Background="DimGray">
+                <Canvas>
+                    <Border BorderThickness="1" BorderBrush="Black">
+                        <TextBlock Text="dupa"></TextBlock>
+                        
+                    </Border>
+                    <Button Content="cos" ></Button>
+                </Canvas>
         </StackPanel>
         </ScrollViewer>
     </Grid>

@@ -57,6 +57,10 @@ namespace MailBox
                 i++;
             }
         }
+        public void NewMessage(MimeMessage message)
+        {
+
+        }
         private TextBlock CreateTextBlock()
         {
             var txtblck = new TextBlock();
