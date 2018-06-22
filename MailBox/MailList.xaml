@@ -28,7 +28,7 @@
             </Setter>
         </Style>
     </UserControl.Resources>
-    <Grid Margin="0,0,0,0">
+    <Grid>
         <ScrollViewer Width="280">
             <StackPanel x:Name="panel" Width="280">
                 
