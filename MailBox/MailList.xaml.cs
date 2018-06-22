@@ -55,9 +55,17 @@ namespace MailBox
             img.Source = bitmap;
             img.Visibility = Visibility.Hidden;
             grid.Children.Add(img);
+            img.MouseLeftButtonDown += Img_MouseLeftButtonDown;
             Grid.SetColumn(img, 1);
             Grid.SetRow(img, 0);
         }
+
+        private void Img_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            panel.Children.Remove((((sender as Image).Parent as Grid).Parent as Button));
+            //TODO Delete email on server side
+        }
+
         private void GenerateTextBlock(Grid grid, string text,ref int ix)
         {
             var block = new TextBlock();
@@ -161,7 +169,7 @@ namespace MailBox
         private void Button_MouseEnter(object sender, MouseEventArgs e)
         {
             var btn = sender as Button;
-         //   btn.Background = Brushes.DimGray;
+            btn.Background = Brushes.AliceBlue;
             var grid = btn.Content as Grid;
             grid.Children[3].Visibility = Visibility.Visible;
             var controls = grid.Children;
