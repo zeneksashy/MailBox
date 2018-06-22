@@ -17,7 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace MailBox
+namespace MailBox.Send
 {
     /// <summary>
     /// Interaction logic for SendWindow.xaml
@@ -29,6 +29,18 @@ namespace MailBox
         private HashSet<string> _attachments;
 
         public SendWindow()
+        {
+            Initialize();
+        }
+
+        public SendWindow(string to, string subject)
+        {
+            Initialize();
+            toTextBox.Text = to;
+            subjectTextBox.Text = subject;
+        }
+
+        private void Initialize()
         {
             InitializeComponent();
 
@@ -47,7 +59,22 @@ namespace MailBox
             if (_openFileDialog.ShowDialog() == true)
             {
                 _attachments.Add(_openFileDialog.FileName);
+                attachments.Children.Add(GetNewAttachment(_openFileDialog));
             }
+        }
+
+        private Attachment GetNewAttachment(OpenFileDialog file)
+        {
+            Attachment attachment = new Attachment(file);
+            attachment.MouseLeftButtonDown += Attachment_MouseLeftButtonDown;
+            return attachment;
+        }
+
+        private void Attachment_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Attachment attachment = sender as Attachment;
+            _attachments.Remove(attachment.FilePath);
+            attachments.Children.Remove(attachment);
         }
 
         private SmtpClient GetSmtpClient()
@@ -69,8 +96,10 @@ namespace MailBox
 
         private void SendButton_Click(object sender, RoutedEventArgs e)
         {
-            SendMessage();
-
+            if (string.IsNullOrEmpty(toTextBox.Text))
+                MessageBox.Show("Receiver box cannot be empty");
+            else
+                SendMessage();
         }
 
         private MailMessage GetMailMessage()
@@ -118,3 +147,4 @@ namespace MailBox
         }
     }
 }
+

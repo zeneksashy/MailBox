@@ -24,15 +24,18 @@ using MailBox.Properties;
 using System.Text.RegularExpressions;
 //TODO
 //Show Attachments --  almost done, saving left -- done
-// Reply to
-// Send msg
-//Filtering -- need testing 
+// Reply to -- done
+// Send msg -- done
+//Filtering -- need testing -- done
 //Sorting  -- done
-//Nicer look
+//Nicer look --1/10 done
 //Logout -- done 
 //Changing hosts -- done
-//imap idle
+//imap idle -- almost done, 
 //inbox add ?
+//message deleting -- almost done, need testing -- nie 
+//message updating 
+//Checking on startup if any new messages reciewed -- done
 
 namespace MailBox
 {
@@ -42,15 +45,21 @@ namespace MailBox
     public partial class MainWindow : Window
     {
         #region private fileds
+        private List<string> _replyTo = new List<string>();
+        private string _replySubject = "";
         Imapfeatures features;
         string path;
         Client client = Client.GetInstance();
+        List<Message> messages = new List<Message>();
+        List<Message> originial_2 = new List<Message>();
         List<MimeMessage> original = new List<MimeMessage>();
         List<MimeMessage> msg = new List<MimeMessage>();
         ImapClient imap;
         HashSet<string> tempdirs = new HashSet<string>();
         IMailFolder inbox;
-        ImapClient idleclient;
+        ImapIdle idle;
+        private HashSet<int> uids = new HashSet<int>();
+
         #endregion
 
         /// <summary>
@@ -61,32 +70,24 @@ namespace MailBox
         {
             InitializeComponent();
             path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            path +=@"\"+client.setName()+@"\mails";
+            path += @"\" + client.setName() + @"\mails";
             imap = new ImapClient();
-            idleclient= new ImapClient();
-            idleclient.Connect(client.Host, client.Port, true);
-            idleclient.Authenticate(client.Email, client.Password);
             imap.Connect(client.Host, client.Port, true);
-            imap.Authenticate(client.Email, client.Password);         
+            imap.Authenticate(client.Email, client.Password);
+            imap.Inbox.MessageFlagsChanged += Inbox_MessageFlagsChanged;
             inbox = imap.Inbox;
-            inbox.Open(FolderAccess.ReadOnly);
-            imap.IdleAsync(new CancellationToken());
+            inbox.Open(FolderAccess.ReadWrite);
+            idle = new ImapIdle(inbox.Count);
         }
-      
+
+
         #region private methods
-        private void ChangeVisibilities()
+        private void Inbox_MessageFlagsChanged(object sender, MessageFlagsChangedEventArgs e)
         {
-            features = new Imapfeatures(msg);
-            original = msg;
-            msg = features.SortBy(SortFilters.Date, Order.DSC);
-            mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
-            progress_label.Dispatcher.Invoke(() => progress_label.Visibility = Visibility.Hidden);
-            bar.Dispatcher.Invoke(() => bar.Visibility = Visibility.Hidden);
-            browser.Dispatcher.Invoke(() => browser.Visibility = Visibility.Visible);
-            scroller.Dispatcher.Invoke(() => scroller.Visibility = Visibility.Visible);
+            if (e.Flags == MessageFlags.Deleted)
+                MessageBox.Show("Message deleted");
         }
-        #region event handlers
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void SaveToFile()
         {
             imap.Disconnect(true);
             if (!Directory.Exists(path))
@@ -103,9 +104,34 @@ namespace MailBox
             }
             Settings.Default.isSaved = true;
             Settings.Default.Save();
-            // DeleteTemps();
         }
-        
+        private void ChangeVisibilities()
+        {
+            ShowMessages();
+            progress_label.Dispatcher.Invoke(() => progress_label.Visibility = Visibility.Hidden);
+            bar.Dispatcher.Invoke(() => bar.Visibility = Visibility.Hidden);
+            browser.Dispatcher.Invoke(() => browser.Visibility = Visibility.Visible);
+            scroller.Dispatcher.Invoke(() => scroller.Visibility = Visibility.Visible);
+        }
+        private void ShowMessages()
+        {
+            features = new Imapfeatures(msg);
+            original = msg;
+            msg = features.SortBy(SortFilters.Date, Order.DSC);
+            mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
+           //Array.Sort<MimeMessage,int>()
+        }
+        #region event handlers
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            SaveToFile();
+        }
+     
+        private void Reply_btn_Click(object sender, RoutedEventArgs e)
+        {
+            new Send.SendWindow(String.Join(";", _replyTo), "Re: " + _replySubject).Show();
+        }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             var previous = App.Current.MainWindow;
@@ -260,6 +286,7 @@ namespace MailBox
         private void Window_Closed(object sender, EventArgs e)
         {
             DeleteTemps();
+            idle.Finish();
         }
 
         private void HasAttachments_MenuItem_Click(object sender, RoutedEventArgs e)
@@ -294,17 +321,26 @@ namespace MailBox
             System.Diagnostics.Process.Start(attachmentpath);
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void NewMessageButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Dispatcher.Invoke(() => browser.Visibility = Visibility.Hidden);
-            this.Dispatcher.Invoke(() => panel.Visibility = Visibility.Hidden);
-            this.Dispatcher.Invoke(() => scroller.Visibility = Visibility.Hidden);
+            new Send.SendWindow().Show();
+        }
 
-            SendWindow window = new SendWindow();
-            window.Show();
+        private void RemoveFromServer(int uid)
+        {
+          //  imap.Inbox.Fetch()
+            imap.Inbox.AddFlags(uid, MessageFlags.Deleted, false);
+            imap.Inbox.Expunge();
+        }
+        private void RemoveFromPc(int uid)
+        {
+            if (Directory.Exists(path + "\\msg" + uid + ".eml"))
+                File.Delete(path + "\\msg" + uid + ".eml");
+
         }
 
         #endregion
+
         #region imap methods
         /// <summary>
         /// fetches all the messages from inbox and add them to msg list
@@ -316,8 +352,27 @@ namespace MailBox
                 client.mails.Add(item);
                 msg.Add(item);
             }
+            //foreach (var uid in inbox.Search(SearchQuery.NotSeen))
+            //{
+            //    var message = inbox.GetMessage(uid);
+            //    var mess = new Message(message, false);
 
+            //}
+            //foreach (var uid in inbox.Search(SearchQuery.Seen))
+            //{
+            //    var message = inbox.GetMessage(uid);
+            //    var mess = new Message(message, true);
+            //    messages.Add(mess);
+            //}
             ChangeVisibilities();
+        }
+        private void LoadMessages(int index)
+        {
+            foreach (var item in Fetch(inbox,index))
+            {
+                client.mails.Add(item);
+                msg.Add(item);
+            }
         }
         /// <summary>
         /// Load mails from path and adds them to msg list
@@ -330,8 +385,11 @@ namespace MailBox
             {
                 msg.Add(MimeMessage.Load(file));
             }
+            if (Check())
+                LoadMessages(msg.Count);
             ChangeVisibilities();
         }
+        private bool Check() => msg.Count < inbox.Count;
 
         /// <summary>
         /// fetches all messages in inbox
@@ -342,6 +400,15 @@ namespace MailBox
         {
             for (int i = 0; i < inbox.Count; i++)
             {
+                uids.Add(i);
+                yield return inbox.GetMessage(i);
+            }
+        }
+        IEnumerable<MimeMessage> Fetch(IMailFolder inbox,int startindex)
+        {
+            for (int i = startindex; i < inbox.Count; i++)
+            {
+                uids.Add(i);
                 yield return inbox.GetMessage(i);
             }
         }
@@ -375,8 +442,7 @@ namespace MailBox
                 panel.Children.Add(userctrl);
                 i++;
             }
-        }   
-       
+        }
         /// <summary>
         /// Deletes temporary files from appdata directory
         /// </summary>
@@ -384,20 +450,27 @@ namespace MailBox
         {
             foreach (var dir in tempdirs)
             {
-                Directory.Delete(dir,true);
+                Directory.Delete(dir, true);
             }
-        }  
+        }
         #endregion
         #region public methods
-        public void FetchIdle()
+        public void AddToList(MimeMessage message)
         {
-            inbox = imap.Inbox;
-            inbox.Open(FolderAccess.ReadOnly);
-            int count = msg.Count;
-            for (int i = count; i < inbox.Count; i++)
-            {
-                msg.Add(inbox.GetMessage(i));
-            }
+            msg.Add(message);
+            ShowMessages();
+        }
+        /// <summary>
+        /// Deletes email on a given uid on server side
+        /// </summary>
+        /// <param name="uid">uid of message to delete</param>
+        /// 
+        public void DeleteMessage(int uid)
+        {
+            uid--;
+            RemoveFromPc(uid);
+            RemoveFromServer(uid);
+            msg.RemoveAt(uid);
         }
         /// <summary>
         /// Shows a message in a browser
@@ -408,10 +481,10 @@ namespace MailBox
             panel.Children.Clear();
             var message = msg[uid - 1];
             StringBuilder sb = new StringBuilder();
-            var from = getMailbox(message.From.Mailboxes);
+            var from = _replyTo = getMailbox(message.From.Mailboxes);
             var to = getMailbox(message.To.Mailboxes);
             var date = message.Date;
-            var subject = message.Subject;
+            var subject = _replySubject = message.Subject;
             foreach (var adr in from)
             {
                 sb.Append("OD: ").Append(adr).Append(" ");
@@ -429,9 +502,14 @@ namespace MailBox
             text.Text = sb.ToString();
             ShowAttachments(message);
             browser.NavigateToString(htmlpreview.HtmlBody);
+            reply_btn.Visibility = Visibility.Visible;
         }
         #endregion
 
+        
+
+      
     }
-    
+
+
 }

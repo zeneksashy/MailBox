@@ -41,19 +41,35 @@ namespace MailBox
     }
 
     #endregion
+    // class MessageSort : IComparer
+    //{
+    //    int IComparer<T>.Compare(T first , T second)
+    //    {
 
+    //        //car c1 = (car)a;
+    //        //car c2 = (car)b;
+    //        //if (c1.year > c2.year)
+    //        //    return 1;
+    //        //if (c1.year < c2.year)
+    //        //    return -1;
+    //        //else
+    //        //    return 0;
+    //    }
+    //}
     class Imapfeatures
     {
+        HashSet<int> uids = new HashSet<int>();
         List<MimeMessage> messages = new List<MimeMessage>();
         List<MimeMessage> filtred = new List<MimeMessage>();
         /// <summary>
         /// Main construcotr of imapfeatures class declare messages and filtred list from parameter
         /// </summary>
         /// <param name="messages"> list of messages from inbox</param>
-        public Imapfeatures(List<MimeMessage> messages)
+        public Imapfeatures(List<MimeMessage> messages)//, HashSet<int> uids)
         {
             this.messages = messages;
             this.filtred = messages;
+           // this.uids = uid
         }
       
 
@@ -100,12 +116,17 @@ namespace MailBox
                     break;
             }
         }
+        //public static IComparer Sort()
+        //{
+        //    return (IComparer)new sortYearAscendingHelper();
+        //}
         /// <summary>
         /// sorts list descending
         /// </summary>
         /// <param name="filter"> object that method sorts by</param>
         private void SortDsc(SortFilters filter)
         {
+            
             switch (filter)
             {
                 case SortFilters.Subject:

@@ -6,10 +6,33 @@
              xmlns:local="clr-namespace:MailBox"
              mc:Ignorable="d" 
              d:DesignHeight="720" d:DesignWidth="280">
-    <Grid Margin="0,0,0,0">
+    <UserControl.Resources>
+        <Style x:Key="ListButton" TargetType="Button">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border" BorderThickness="0" BorderBrush="Black" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FFB3B9BF"/>
+                                <Setter Property="BorderBrush" Value="#FFB3B9BF"/>
+                                <Setter Property="Opacity" Value="0.95"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
         <ScrollViewer Width="280">
-        <StackPanel x:Name="panel" Width="280" Background="DimGray">
-        </StackPanel>
+            <StackPanel x:Name="panel" Width="280">
+                
+            </StackPanel>
         </ScrollViewer>
     </Grid>
 </UserControl>
