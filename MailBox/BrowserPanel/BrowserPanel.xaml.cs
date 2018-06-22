@@ -58,17 +58,26 @@ namespace MailBox.BrowserPanel
         public void ChangeTarget(MimeMessage message, int uid, string path, HashSet<string> tempDirs)
         {
             _message = message;
+            FillTextBlocks();
+            FillBrowser(System.IO.Path.Combine(path, "msg" + uid), tempDirs);
+        }
+
+        private void FillTextBlocks()
+        {
             infoStackPanel.DataContext = _message;
             fromTextBlock.Text = String.Join(" ", _message.From);
             toTextBlock.Text = String.Join(" ", _message.To);
-            var foo = System.IO.Path.Combine(path, "msg" + uid);
-            var htmlPreview = new HtmlPreviewVisitor(foo);
-            Directory.CreateDirectory(foo);
-            tempDirs.Add(foo);
-            message.Accept(htmlPreview);
-            browserBrowser.NavigateToString(htmlPreview.HtmlBody);
-            
         }
+
+        private void FillBrowser(string fullPath, HashSet<string> tempDirs)
+        {
+            Directory.CreateDirectory(fullPath);
+            tempDirs.Add(fullPath);
+            HtmlPreviewVisitor htmlPreview = new HtmlPreviewVisitor(fullPath);
+            _message.Accept(htmlPreview);
+            browserBrowser.NavigateToString(htmlPreview.HtmlBody);
+        }
+
 
         private void ReplyButton_Click(object sender, RoutedEventArgs e)
         {
