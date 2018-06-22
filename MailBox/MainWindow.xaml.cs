@@ -305,11 +305,11 @@ namespace MailBox
             System.Diagnostics.Process.Start(attachmentpath);
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void NewMessageButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Dispatcher.Invoke(() => browser.Visibility = Visibility.Hidden);
-            this.Dispatcher.Invoke(() => panel.Visibility = Visibility.Hidden);
-            this.Dispatcher.Invoke(() => scroller.Visibility = Visibility.Hidden);
+            //this.Dispatcher.Invoke(() => browser.Visibility = Visibility.Hidden);
+            //this.Dispatcher.Invoke(() => panel.Visibility = Visibility.Hidden);
+            //this.Dispatcher.Invoke(() => scroller.Visibility = Visibility.Hidden);
 
             new Send.SendWindow().Show();
         }
