@@ -91,8 +91,6 @@ namespace MailBox
             ShowMessages();
             progress_label.Dispatcher.Invoke(() => progress_label.Visibility = Visibility.Hidden);
             bar.Dispatcher.Invoke(() => bar.Visibility = Visibility.Hidden);
-            //browser.Dispatcher.Invoke(() => browser.Visibility = Visibility.Visible);
-            //scroller.Dispatcher.Invoke(() => scroller.Visibility = Visibility.Visible);
         }
         private void ShowMessages()
         {
@@ -317,10 +315,6 @@ namespace MailBox
 
         private void NewMessageButton_Click(object sender, RoutedEventArgs e)
         {
-            //this.Dispatcher.Invoke(() => browser.Visibility = Visibility.Hidden);
-            //this.Dispatcher.Invoke(() => panel.Visibility = Visibility.Hidden);
-            //this.Dispatcher.Invoke(() => scroller.Visibility = Visibility.Hidden);
-
             new Send.SendWindow().Show();
         }
 
@@ -394,19 +388,19 @@ namespace MailBox
         #endregion
         private void ShowAttachments(MimeMessage msg)
         {
-            var attachments = msg.Attachments;
-            int i = 0;
-            foreach (var attachment in attachments)
-            {
-                var userctrl = new Attachment();
-                userctrl.Cursor = Cursors.Hand;
-                userctrl.Attach = attachment;
-                userctrl.PreviewMouseLeftButtonDown += UserCtrl_PreviewMouseDown;
-                userctrl.Uid = i.ToString();
-                userctrl.ChangeLabelName(attachment.ContentDisposition.FileName);
-                //panel.Children.Add(userctrl);
-                i++;
-            }
+            // To właściwie jest narazie bezużyteczne
+            //var attachments = msg.Attachments;
+            //int i = 0;
+            //foreach (var attachment in attachments)
+            //{
+            //    var userctrl = new Attachment();
+            //    userctrl.Cursor = Cursors.Hand;
+            //    userctrl.Attach = attachment;
+            //    userctrl.PreviewMouseLeftButtonDown += UserCtrl_PreviewMouseDown;
+            //    userctrl.Uid = i.ToString();
+            //    userctrl.ChangeLabelName(attachment.ContentDisposition.FileName);
+            //    i++;
+            //}
         }
         /// <summary>
         /// Deletes temporary files from appdata directory
@@ -454,35 +448,8 @@ namespace MailBox
         /// <param name="uid">uid of message which we want to show</param>
         public void OpenInBrowser(int uid)
         {
-            //panel.Children.Clear();
             var message = msg[uid - 1];
             browserPanel.ChangeTarget(message, uid, path, tempdirs);
-
-
-
-            //StringBuilder sb = new StringBuilder();
-            //var from = _replyTo = getMailbox(message.From.Mailboxes);
-            //var to = getMailbox(message.To.Mailboxes);
-            //var date = message.Date;
-            //var subject = _replySubject = message.Subject;
-            //foreach (var adr in from)
-            //{
-            //    sb.Append("OD: ").Append(adr).Append(" ");
-            //}
-            //foreach (var adr in to)
-            //{
-            //    sb.Append("DO: ").Append(adr).Append(" ");
-            //}
-            //sb.AppendLine().Append("Temat: ").Append(subject).Append(" Data: ").Append(date);
-            //var tmp = System.IO.Path.Combine(path, "msg" + uid);
-            //var htmlpreview = new HtmlPreviewVisitor(tmp);
-            //Directory.CreateDirectory(tmp);
-            //tempdirs.Add(tmp);
-            //message.Accept(htmlpreview);
-            //text.Text = sb.ToString();
-            //ShowAttachments(message);
-            //browser.NavigateToString(htmlpreview.HtmlBody);
-            //reply_btn.Visibility = Visibility.Visible;
         }
         #endregion
 
