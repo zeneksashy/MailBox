@@ -80,11 +80,11 @@ namespace MailBox
 
 
         #region private methods
-        private void Inbox_MessageFlagsChanged(object sender, MessageFlagsChangedEventArgs e)
-        {
-            if (e.Flags == MessageFlags.Deleted)
-                MessageBox.Show("Message deleted");
-        }
+        //private void Inbox_MessageFlagsChanged(object sender, MessageFlagsChangedEventArgs e)
+        //{
+        //    if (e.Flags == MessageFlags.Deleted)
+        //        MessageBox.Show("Message deleted");
+        //}
 
         private void ChangeVisibilities()
         {
@@ -420,11 +420,11 @@ namespace MailBox
         }
         #endregion
         #region public methods
-        //public void AddToList(MimeMessage message)
-        //{
-        //    msg.Add(message);
-        //    ShowMessages();
-        //}
+        public void AddToList(MimeMessage message)
+        {
+            msg.Add(message);
+            ShowMessages();
+        }
         public void FetchIdle()
         {
             inbox = imap.Inbox;
