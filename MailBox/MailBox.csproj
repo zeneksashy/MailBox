@@ -81,6 +81,7 @@
     <Compile Include="MailList.xaml.cs">
       <DependentUpon>MailList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Message.cs" />
     <Compile Include="Send\Attachment.xaml.cs">
       <DependentUpon>Attachment.xaml</DependentUpon>
     </Compile>
