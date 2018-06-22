@@ -62,18 +62,18 @@ namespace MailBox
         ///
         /// </summary>
         public MainWindow()
-        {          
+        {
             InitializeComponent();
             path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            path +=@"\"+client.setName()+@"\mails";
+            path += @"\" + client.setName() + @"\mails";
             imap = new ImapClient();
             imap.Connect(client.Host, client.Port, true);
-            imap.Authenticate(client.Email, client.Password);         
+            imap.Authenticate(client.Email, client.Password);
             inbox = imap.Inbox;
             inbox.Open(FolderAccess.ReadOnly);
             idle = new ImapIdle(inbox.Count);
         }
-      
+
         #region private methods
         private void ChangeVisibilities()
         {
@@ -110,7 +110,7 @@ namespace MailBox
             Settings.Default.Save();
             // DeleteTemps();
         }
-        
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             var previous = App.Current.MainWindow;
@@ -381,8 +381,8 @@ namespace MailBox
                 panel.Children.Add(userctrl);
                 i++;
             }
-        }   
-       
+        }
+
         /// <summary>
         /// Deletes temporary files from appdata directory
         /// </summary>
@@ -390,15 +390,15 @@ namespace MailBox
         {
             foreach (var dir in tempdirs)
             {
-                Directory.Delete(dir,true);
+                Directory.Delete(dir, true);
             }
-        }  
+        }
         #endregion
         #region public methods
         public void AddToList(MimeMessage message)
         {
             msg.Add(message);
-            ShowMessages();         
+            ShowMessages();
         }
         public void FetchIdle()
         {
@@ -419,10 +419,10 @@ namespace MailBox
             panel.Children.Clear();
             var message = msg[uid - 1];
             StringBuilder sb = new StringBuilder();
-            var from = getMailbox(message.From.Mailboxes);
+            var from = _replyTo = getMailbox(message.From.Mailboxes);
             var to = getMailbox(message.To.Mailboxes);
             var date = message.Date;
-            var subject = message.Subject;
+            var subject = _replySubject = message.Subject;
             foreach (var adr in from)
             {
                 sb.Append("OD: ").Append(adr).Append(" ");
@@ -444,6 +444,15 @@ namespace MailBox
         }
         #endregion
 
+
+
+        private List<string> _replyTo = new List<string>();
+        private string _replySubject = "";
+
+        private void Reply_btn_Click(object sender, RoutedEventArgs e)
+        {
+            new Send.SendWindow(String.Join(";", _replyTo), "Re: " + _replySubject).Show();
+        }
     }
-    
+
 }

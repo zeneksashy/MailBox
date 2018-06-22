@@ -33,10 +33,11 @@ namespace MailBox.Send
             Initialize();
         }
 
-        public SendWindow(string to)
+        public SendWindow(string to, string subject)
         {
             Initialize();
             toTextBox.Text = to;
+            subjectTextBox.Text = subject;
         }
 
         private void Initialize()
