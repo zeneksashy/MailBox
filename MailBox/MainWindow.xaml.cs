@@ -71,7 +71,7 @@ namespace MailBox
             imap = new ImapClient();
             imap.Connect(client.Host, client.Port, true);
             imap.Authenticate(client.Email, client.Password);
-            imap.Inbox.MessageFlagsChanged += Inbox_MessageFlagsChanged;
+            //imap.Inbox.MessageFlagsChanged += Inbox_MessageFlagsChanged;
             inbox = imap.Inbox;
             inbox.Open(FolderAccess.ReadWrite);
             idle = new ImapIdle(inbox.Count);
@@ -420,11 +420,11 @@ namespace MailBox
         }
         #endregion
         #region public methods
-        public void AddToList(MimeMessage message)
-        {
-            msg.Add(message);
-            ShowMessages();
-        }
+        //public void AddToList(MimeMessage message)
+        //{
+        //    msg.Add(message);
+        //    ShowMessages();
+        //}
         public void FetchIdle()
         {
             inbox = imap.Inbox;
