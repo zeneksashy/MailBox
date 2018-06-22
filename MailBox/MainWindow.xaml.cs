@@ -91,8 +91,8 @@ namespace MailBox
             ShowMessages();
             progress_label.Dispatcher.Invoke(() => progress_label.Visibility = Visibility.Hidden);
             bar.Dispatcher.Invoke(() => bar.Visibility = Visibility.Hidden);
-            browser.Dispatcher.Invoke(() => browser.Visibility = Visibility.Visible);
-            scroller.Dispatcher.Invoke(() => scroller.Visibility = Visibility.Visible);
+            //browser.Dispatcher.Invoke(() => browser.Visibility = Visibility.Visible);
+            //scroller.Dispatcher.Invoke(() => scroller.Visibility = Visibility.Visible);
         }
         private void ShowMessages()
         {
@@ -404,7 +404,7 @@ namespace MailBox
                 userctrl.PreviewMouseLeftButtonDown += UserCtrl_PreviewMouseDown;
                 userctrl.Uid = i.ToString();
                 userctrl.ChangeLabelName(attachment.ContentDisposition.FileName);
-                panel.Children.Add(userctrl);
+                //panel.Children.Add(userctrl);
                 i++;
             }
         }
@@ -443,7 +443,7 @@ namespace MailBox
         /// 
         public void DeleteMessage(int uid)
         {
-            imap.Inbox.AddFlags(uid, MessageFlags.Deleted, false);
+            imap.Inbox.AddFlags(uid, MessageFlags.Deleted, true);
             imap.Inbox.Expunge();
         }
 
@@ -454,31 +454,35 @@ namespace MailBox
         /// <param name="uid">uid of message which we want to show</param>
         public void OpenInBrowser(int uid)
         {
-            panel.Children.Clear();
+            //panel.Children.Clear();
             var message = msg[uid - 1];
-            StringBuilder sb = new StringBuilder();
-            var from = _replyTo = getMailbox(message.From.Mailboxes);
-            var to = getMailbox(message.To.Mailboxes);
-            var date = message.Date;
-            var subject = _replySubject = message.Subject;
-            foreach (var adr in from)
-            {
-                sb.Append("OD: ").Append(adr).Append(" ");
-            }
-            foreach (var adr in to)
-            {
-                sb.Append("DO: ").Append(adr).Append(" ");
-            }
-            sb.AppendLine().Append("Temat: ").Append(subject).Append(" Data: ").Append(date);
-            var tmp = System.IO.Path.Combine(path, "msg" + uid);
-            var htmlpreview = new HtmlPreviewVisitor(tmp);
-            Directory.CreateDirectory(tmp);
-            tempdirs.Add(tmp);
-            message.Accept(htmlpreview);
-            text.Text = sb.ToString();
-            ShowAttachments(message);
-            browser.NavigateToString(htmlpreview.HtmlBody);
-            reply_btn.Visibility = Visibility.Visible;
+            browserPanel.ChangeTarget(message, uid, path, tempdirs);
+
+
+
+            //StringBuilder sb = new StringBuilder();
+            //var from = _replyTo = getMailbox(message.From.Mailboxes);
+            //var to = getMailbox(message.To.Mailboxes);
+            //var date = message.Date;
+            //var subject = _replySubject = message.Subject;
+            //foreach (var adr in from)
+            //{
+            //    sb.Append("OD: ").Append(adr).Append(" ");
+            //}
+            //foreach (var adr in to)
+            //{
+            //    sb.Append("DO: ").Append(adr).Append(" ");
+            //}
+            //sb.AppendLine().Append("Temat: ").Append(subject).Append(" Data: ").Append(date);
+            //var tmp = System.IO.Path.Combine(path, "msg" + uid);
+            //var htmlpreview = new HtmlPreviewVisitor(tmp);
+            //Directory.CreateDirectory(tmp);
+            //tempdirs.Add(tmp);
+            //message.Accept(htmlpreview);
+            //text.Text = sb.ToString();
+            //ShowAttachments(message);
+            //browser.NavigateToString(htmlpreview.HtmlBody);
+            //reply_btn.Visibility = Visibility.Visible;
         }
         #endregion
 
