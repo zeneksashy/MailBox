@@ -8,17 +8,23 @@
         Title="MainWindow" Height="864" Width="1536" Loaded="Window_Loaded" ContentRendered="Window_ContentRendered" Closing="Window_Closing" Closed="Window_Closed">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="6*"/>
-            <ColumnDefinition Width="133*"/>
+            <ColumnDefinition Width="140*"/>
             <ColumnDefinition Width="625*"/>
-            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition Width="22"/>
         </Grid.ColumnDefinitions>
-        <ProgressBar x:Name="bar" HorizontalAlignment="Left" Height="40" Margin="22,754,0,0" VerticalAlignment="Top" Width="1228" Minimum="0" Maximum="100" IsIndeterminate="True" Visibility="Visible" Panel.ZIndex="3" Grid.Column="2"/>
-        <Label x:Name="progress_label" Content="Ładowanie wiadomości" HorizontalAlignment="Center" Margin="385,735,359,6" VerticalAlignment="Center" Width="506" Height="92" FontSize="48" Visibility="Visible" Panel.ZIndex="4" Grid.Column="2"/>
-        <WebBrowser x:Name="browser" HorizontalAlignment="Left" Height="640" Margin="7,95,0,0" VerticalAlignment="Top" Width="1228" Panel.ZIndex="5" Visibility="Visible" Grid.Column="2"/>
-        <local:MailList x:Name="mails" Grid.ColumnSpan="3" HorizontalAlignment="Left" Height="799" VerticalAlignment="Top" Width="285" Margin="0,24,0,0"/>
-        <TextBlock x:Name="text" Grid.Column="2" HorizontalAlignment="Left" Margin="12,24,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" RenderTransformOrigin="0.51,1.719" Height="56" Width="1223"></TextBlock>
-        <Button x:Name="reply_btn" Content="Reply" Margin="1148,64,15,738" Grid.Column="2" FontSize="16" Visibility="Hidden" Click="Reply_btn_Click"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="75*"/>
+            <RowDefinition Height="500*"/>
+            <RowDefinition Height="75*"/>
+        </Grid.RowDefinitions>
+
+
+        <ProgressBar x:Name="bar" HorizontalAlignment="Left" Height="55" Grid.Row="2"  VerticalAlignment="Top"  Minimum="0" Maximum="100" IsIndeterminate="True" Visibility="Visible" Panel.ZIndex="3" Grid.Column="1"/>
+        <Label x:Name="progress_label" Content="Ładowanie wiadomości" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Top" Width="506" Height="92" FontSize="48" Visibility="Visible" Panel.ZIndex="4" Grid.Column="1"/>
+        <WebBrowser x:Name="browser" HorizontalAlignment="Left" Height="640" Grid.Row="1"  VerticalAlignment="Bottom" Width="1228" Panel.ZIndex="5" Visibility="Visible" Grid.Column="1"/>
+        <local:MailList x:Name="mails"  HorizontalAlignment="Left" Grid.Column="0" Grid.RowSpan="3" VerticalAlignment="Bottom" Width="285" />
+        <TextBlock x:Name="text" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left"  TextWrapping="Wrap"  VerticalAlignment="Bottom"  Height="56" Width="1223"></TextBlock>
+        <Button x:Name="reply_btn" Content="Reply" Height="30" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Right" Grid.Row="0" Grid.Column="1" FontSize="16" Visibility="Hidden" Click="Reply_btn_Click"/>
         <Menu HorizontalAlignment="Left" Height="24" VerticalAlignment="Top" Width="1518" Grid.ColumnSpan="3">
             <Button Content="Logout" Click="Button_Click" Padding="10,2,10,2"/>
             <Button x:Name="newMessageButton" Content="New message" Padding="10,2,10,2" Click="NewMessageButton_Click"/>
@@ -101,7 +107,7 @@
             </MenuItem>
             <DatePicker x:Name="Date" Text="6/20/2018"/>
         </Menu>
-        <ScrollViewer x:Name="scroller" Grid.Column="2" Margin="12,726,10,0" HorizontalScrollBarVisibility="Auto" Visibility="Hidden">
+        <ScrollViewer x:Name="scroller" Grid.Column="1" Grid.Row="2" HorizontalScrollBarVisibility="Auto" Visibility="Hidden">
             <StackPanel x:Name="panel" Background="DimGray" Height="91" Orientation="Horizontal" Width="1228">
             </StackPanel>
         </ScrollViewer>
