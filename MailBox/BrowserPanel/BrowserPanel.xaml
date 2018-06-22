@@ -47,8 +47,18 @@
             </Grid>
         </StackPanel>
 
+        
         <Border Grid.Row="1" BorderThickness="1" Margin="10" BorderBrush="LightGray">
-            <WebBrowser x:Name="browserBrowser" Grid.Row="1" />
+            <DockPanel>
+
+
+                <ScrollViewer x:Name="scrollViewerAttachments" DockPanel.Dock="Bottom" Margin="0,10,0,0" Padding="10" Visibility="Collapsed"  VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                    <StackPanel x:Name="attachments" Orientation="Horizontal">
+                    </StackPanel>
+                </ScrollViewer>
+                <WebBrowser DockPanel.Dock="Top" x:Name="browserBrowser" />
+
+            </DockPanel>
         </Border>
         
 

@@ -1,4 +1,5 @@
-﻿using MimeKit;
+﻿using Microsoft.Win32;
+using MimeKit;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,43 +24,74 @@ namespace MailBox.BrowserPanel
     public partial class BrowserPanel : UserControl
     {
         private MimeMessage _message;
+        private string _path;
 
         public BrowserPanel()
         {
             InitializeComponent();
         }
 
-        //panel.Children.Clear();
-        //    var message = msg[uid - 1];
-        //    StringBuilder sb = new StringBuilder();
-        //    var from = _replyTo = getMailbox(message.From.Mailboxes);
-        //    var to = getMailbox(message.To.Mailboxes);
-        //    var date = message.Date;
-        //    var subject = _replySubject = message.Subject;
-        //    foreach (var adr in from)
-        //    {
-        //        sb.Append("OD: ").Append(adr).Append(" ");
-        //    }
-        //    foreach (var adr in to)
-        //    {
-        //        sb.Append("DO: ").Append(adr).Append(" ");
-        //    }
-        //    sb.AppendLine().Append("Temat: ").Append(subject).Append(" Data: ").Append(date);
-        //    var tmp = System.IO.Path.Combine(path, "msg" + uid);
-        //    var htmlpreview = new HtmlPreviewVisitor(tmp);
-        //    Directory.CreateDirectory(tmp);
-        //    tempdirs.Add(tmp);
-        //    message.Accept(htmlpreview);
-        //    text.Text = sb.ToString();
-        //    ShowAttachments(message);
-        //    browser.NavigateToString(htmlpreview.HtmlBody);
-        //    reply_btn.Visibility = Visibility.Visible;
-
         public void ChangeTarget(MimeMessage message, int uid, string path, HashSet<string> tempDirs)
         {
             _message = message;
+            _path = path;
+
+            attachments.Children.Clear();
+            scrollViewerAttachments.Visibility = Visibility.Collapsed;
+
             FillTextBlocks();
-            FillBrowser(System.IO.Path.Combine(path, "msg" + uid), tempDirs);
+            FillBrowser(System.IO.Path.Combine(_path, "msg" + uid), tempDirs);
+            FillAttachments();
+           
+        }
+
+        private void FillAttachments()
+        {
+            List<MimeEntity> list = new List<MimeEntity>(_message.Attachments);
+            if (list.Count() != 0)
+            {
+                scrollViewerAttachments.Visibility = Visibility.Visible;
+                foreach (var foo in list)
+                {
+                    Attachment attach = new Attachment(foo.ContentType.Name, foo);
+                    attach.MouseLeftButtonDown += Attach_MouseLeftButtonDown;
+                    attachments.Children.Add(attach);
+                }
+            }
+        }
+
+        private void Attach_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            MimeEntity attachment = (sender as Attachment).Attach;
+
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog()
+            {
+                FileName = attachment.ContentType.Name,
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                DefaultExt = attachment.ContentType.Name.Split('.').Last(),
+                Filter = "All files (*.*)|*.*",
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                using (var stream = File.Create(saveFileDialog.FileName))
+                {
+                    if (attachment is MessagePart)
+                    {
+                        var part = (MessagePart)attachment;
+
+                        part.Message.WriteTo(stream);
+                    }
+                    else
+                    {
+                        var part = (MimePart)attachment;
+
+                        part.Content.DecodeTo(stream);
+                    }
+                }
+                (sender as Attachment).SetDownloaded();
+            }
         }
 
         private void FillTextBlocks()

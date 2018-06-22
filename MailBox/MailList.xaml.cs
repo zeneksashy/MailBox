@@ -147,6 +147,7 @@ namespace MailBox
         {
             var button = sender as Button;
             int uid = int.Parse(button.Uid);
+            mainWindow = App.Current.MainWindow as MainWindow;
             mainWindow.OpenInBrowser(uid);
 
         }

@@ -71,6 +71,9 @@
     <Compile Include="Attachment.xaml.cs">
       <DependentUpon>Attachment.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BrowserPanel\Attachment.xaml.cs">
+      <DependentUpon>Attachment.xaml</DependentUpon>
+    </Compile>
     <Compile Include="BrowserPanel\BrowserPanel.xaml.cs">
       <DependentUpon>BrowserPanel.xaml</DependentUpon>
     </Compile>
@@ -92,6 +95,10 @@
       <DependentUpon>SendWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="Attachment.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BrowserPanel\Attachment.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
