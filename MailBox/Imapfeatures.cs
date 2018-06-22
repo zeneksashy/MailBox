@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,21 +42,16 @@ namespace MailBox
     }
 
     #endregion
-    // class MessageSort : IComparer
-    //{
-    //    int IComparer<T>.Compare(T first , T second)
-    //    {
+     class SortBySubject :IComparer<MimeMessage>
+    {
+  
 
-    //        //car c1 = (car)a;
-    //        //car c2 = (car)b;
-    //        //if (c1.year > c2.year)
-    //        //    return 1;
-    //        //if (c1.year < c2.year)
-    //        //    return -1;
-    //        //else
-    //        //    return 0;
-    //    }
-    //}
+        public int Compare(MimeMessage left, MimeMessage right)
+        {
+            string subject1
+           // throw new NotImplementedException();
+        }
+    }
     class Imapfeatures
     {
         HashSet<int> uids = new HashSet<int>();
@@ -89,6 +85,7 @@ namespace MailBox
                     if (sort == Order.ASC) SortAsc(filter); else SortDsc(filter);
                     break;
                 case SortFilters.Date:
+                    //  Array.Sort<MimeMessage, int>(messages.ToArray(), uids.ToArray(), Sorter.SortByDates());
                     if (sort == Order.ASC) SortAsc(filter); else SortDsc(filter);
                     break;
                 case SortFilters.From:
