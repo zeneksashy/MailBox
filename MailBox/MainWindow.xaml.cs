@@ -71,7 +71,7 @@ namespace MailBox
             imap = new ImapClient();
             imap.Connect(client.Host, client.Port, true);
             imap.Authenticate(client.Email, client.Password);
-            imap.Inbox.MessageFlagsChanged += Inbox_MessageFlagsChanged;
+            //imap.Inbox.MessageFlagsChanged += Inbox_MessageFlagsChanged;
             inbox = imap.Inbox;
             inbox.Open(FolderAccess.ReadWrite);
             idle = new ImapIdle(inbox.Count);
@@ -80,11 +80,11 @@ namespace MailBox
 
 
         #region private methods
-        private void Inbox_MessageFlagsChanged(object sender, MessageFlagsChangedEventArgs e)
-        {
-            if (e.Flags == MessageFlags.Deleted)
-                MessageBox.Show("Message deleted");
-        }
+        //private void Inbox_MessageFlagsChanged(object sender, MessageFlagsChangedEventArgs e)
+        //{
+        //    if (e.Flags == MessageFlags.Deleted)
+        //        MessageBox.Show("Message deleted");
+        //}
 
         private void ChangeVisibilities()
         {
