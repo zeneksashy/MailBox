@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="720" d:DesignWidth="280">
     <UserControl.Resources>
-        <Style x:Key="MyButton" TargetType="Button">
+        <Style x:Key="ListButton" TargetType="Button">
             <Setter Property="OverridesDefaultStyle" Value="True" />
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="Template">
@@ -18,7 +18,9 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Opacity" Value="0.8" />
+                                <Setter Property="Background" Value="#FFB3B9BF"/>
+                                <Setter Property="BorderBrush" Value="#FFB3B9BF"/>
+                                <Setter Property="Opacity" Value="0.95"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -29,35 +31,7 @@
     <Grid Margin="0,0,0,0">
         <ScrollViewer Width="280">
             <StackPanel x:Name="panel" Width="280" Background="DimGray">
-                <Canvas>
-                    <Button BorderBrush="White" MouseEnter="Button_MouseEnter" MouseLeave="Button_MouseLeave" Background="White" >
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Style.Triggers>
-                                    <Trigger Property="Button.IsMouseOver" Value="True">
-                                        <Setter Property="Button.Background" Value="#FFC7BFBF" />
-                                        <Setter Property="Button.BorderBrush" Value="#FFC7BFBF" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="20"/>
-                                <RowDefinition Height="20"/>
-                                <RowDefinition Height="30"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="240" />
-                                <ColumnDefinition  Width="20" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="email" Width="261" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"/>
-                            <TextBlock Text="subject" Width="261" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
-                            <TextBlock Text="body" Width="261" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2"/>
-                            <Image Source="/images/x_button.png" Stretch="Fill" Grid.Column="1"></Image>
-                        </Grid>
-                    </Button>
-                </Canvas>
+                
             </StackPanel>
         </ScrollViewer>
     </Grid>

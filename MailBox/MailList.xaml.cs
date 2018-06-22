@@ -24,38 +24,87 @@ namespace MailBox
         {
             InitializeComponent();
         }
+        private Grid CreateGrid(MimeMessage msg)
+        {
+            int i = 0;
+            var grid = new Grid();
+            grid.Margin = new Thickness(0,0,10,0);
+            GenerateRowsAndColumns(grid);
+            var from = getMailbox(msg.From.Mailboxes);
+            GenerateTextBlock(grid,GetString(msg.To.Mailboxes),ref i);
+            GenerateTextBlock(grid, GetString(msg.From.Mailboxes), ref i);
+            GenerateTextBlock(grid, msg.Subject, ref i);
+            GenerateImage(grid);
+            return grid;
+        }
+        private string GetString(IEnumerable<MailboxAddress> addresses)
+        {
+            var addrs = getMailbox(addresses);
+            string str = String.Empty;
+            foreach (var item in addrs)
+            {
+                str += item;
+            }
+            return str;
+        }
+        private void GenerateImage(Grid grid)
+        {
+            var img = new Image();
+            var uri = new Uri(@"/images/x_button.png",UriKind.Relative);
+            var bitmap = new BitmapImage(uri);
+            img.Source = bitmap;
+            img.Visibility = Visibility.Hidden;
+            grid.Children.Add(img);
+            Grid.SetColumn(img, 1);
+            Grid.SetRow(img, 0);
+        }
+        private void GenerateTextBlock(Grid grid, string text,ref int ix)
+        {
+            var block = new TextBlock();
+            block.Text = text;
+            grid.Children.Add(block);
+            Grid.SetColumn(block, 0);
+            Grid.SetRow(block, ix);
+            ix++;
+        }
+        private void GenerateRowsAndColumns(Grid grid)
+        {
+            grid.RowDefinitions.Add(GenerateRow(20));
+            grid.RowDefinitions.Add(GenerateRow(20));
+            grid.RowDefinitions.Add(GenerateRow(30));
+            grid.ColumnDefinitions.Add(GenerateColumn(230));
+            grid.ColumnDefinitions.Add(GenerateColumn(20));
+
+        }
+        private RowDefinition GenerateRow(int height)
+        {
+            var row = new RowDefinition();
+            row.Height = new GridLength(height);
+            return row;
+        }
+        private ColumnDefinition GenerateColumn(int width)
+        {
+            var col = new ColumnDefinition();
+            col.Width = new GridLength(width);
+            return col;
+        }
         public void ShowMessageList(List<MimeMessage> messages)
         {
-            //panel.Children.Clear();
-            //int i = 1;
-            //foreach (var msg in messages)
-            //{
-            //    StringBuilder sb = new StringBuilder();
-            //    var to = getMailbox(msg.To.Mailboxes);
-            //    var from = getMailbox(msg.From.Mailboxes);
-            //    var subject = msg.Subject;
-            //    var date = msg.Date.ToString("G");
-            //    string body="empty message";
-            //    if (!String.IsNullOrEmpty(msg.TextBody))
-            //        body = msg.TextBody;
-            //    body = Splitted(body);
-            //    foreach (var adr in from)
-            //    {
-            //        sb.Append("OD: ").Append(adr).Append(" ");
-            //    }
-            //    sb.AppendLine();
-            //    foreach (var adr in to)
-            //    {
-            //        sb.Append("DO: ").Append(adr).Append(" ");
-            //    }             
-            //    sb.AppendLine().Append("Temat: ").Append(subject).AppendLine().Append("Data: ").Append(date).AppendLine().Append(body).AppendLine().Append("______________________");
-            //    var txtblck = CreateTextBlock();
-            //    txtblck.Uid = i.ToString();
-            //    txtblck.Text = sb.ToString();
-            //    sb.Clear();
-            //    panel.Children.Add(txtblck);
-            //    i++;
-            //}
+            panel.Children.Clear();
+
+            int i = 1;
+            foreach (var msg in messages)
+            {
+                var button = new Button();
+                button.Style= Resources["ListButton"] as Style;
+                button.Background = Brushes.White;
+                button.Foreground = Brushes.Black;
+                button.BorderBrush = Brushes.White;
+                button.MouseEnter += Button_MouseEnter;
+                button.MouseLeave += Button_MouseLeave;
+                button.Content = CreateGrid(msg);
+                panel.Children.Add(button);
+            }
         }
         public void NewMessage(MimeMessage message)
         {
