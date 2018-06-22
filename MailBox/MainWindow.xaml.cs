@@ -317,10 +317,6 @@ namespace MailBox
 
         private void NewMessageButton_Click(object sender, RoutedEventArgs e)
         {
-            //this.Dispatcher.Invoke(() => browser.Visibility = Visibility.Hidden);
-            //this.Dispatcher.Invoke(() => panel.Visibility = Visibility.Hidden);
-            //this.Dispatcher.Invoke(() => scroller.Visibility = Visibility.Hidden);
-
             new Send.SendWindow().Show();
         }
 
@@ -445,8 +441,26 @@ namespace MailBox
         {
             imap.Inbox.AddFlags(uid, MessageFlags.Deleted, false);
             imap.Inbox.Expunge();
-        }
 
+        }
+        private void RemoveFromPc(int uid)
+        {
+            //if (!Directory.Exists(path))
+
+            //int i = 1;
+            //var sb = new StringBuilder(path);
+            //foreach (var item in msg)
+            //{
+            //    sb.Append("\\msg").Append(i).Append(".eml");
+            //    item.WriteTo(sb.ToString());
+            //    i++;
+            //    sb.Clear();
+            //    sb.Append(path);
+            //}
+            //Settings.Default.isSaved = true;
+            //Settings.Default.Save();
+
+        }
 
         /// <summary>
         /// Shows a message in a browser
@@ -487,5 +501,6 @@ namespace MailBox
 
       
     }
+
 
 }
