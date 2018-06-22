@@ -26,36 +26,36 @@ namespace MailBox
         }
         public void ShowMessageList(List<MimeMessage> messages)
         {
-            panel.Children.Clear();
-            int i = 1;
-            foreach (var msg in messages)
-            {
-                StringBuilder sb = new StringBuilder();
-                var to = getMailbox(msg.To.Mailboxes);
-                var from = getMailbox(msg.From.Mailboxes);
-                var subject = msg.Subject;
-                var date = msg.Date.ToString("G");
-                string body="empty message";
-                if (!String.IsNullOrEmpty(msg.TextBody))
-                    body = msg.TextBody;
-                body = Splitted(body);
-                foreach (var adr in from)
-                {
-                    sb.Append("OD: ").Append(adr).Append(" ");
-                }
-                sb.AppendLine();
-                foreach (var adr in to)
-                {
-                    sb.Append("DO: ").Append(adr).Append(" ");
-                }             
-                sb.AppendLine().Append("Temat: ").Append(subject).AppendLine().Append("Data: ").Append(date).AppendLine().Append(body).AppendLine().Append("______________________");
-                var txtblck = CreateTextBlock();
-                txtblck.Uid = i.ToString();
-                txtblck.Text = sb.ToString();
-                sb.Clear();
-                panel.Children.Add(txtblck);
-                i++;
-            }
+            //panel.Children.Clear();
+            //int i = 1;
+            //foreach (var msg in messages)
+            //{
+            //    StringBuilder sb = new StringBuilder();
+            //    var to = getMailbox(msg.To.Mailboxes);
+            //    var from = getMailbox(msg.From.Mailboxes);
+            //    var subject = msg.Subject;
+            //    var date = msg.Date.ToString("G");
+            //    string body="empty message";
+            //    if (!String.IsNullOrEmpty(msg.TextBody))
+            //        body = msg.TextBody;
+            //    body = Splitted(body);
+            //    foreach (var adr in from)
+            //    {
+            //        sb.Append("OD: ").Append(adr).Append(" ");
+            //    }
+            //    sb.AppendLine();
+            //    foreach (var adr in to)
+            //    {
+            //        sb.Append("DO: ").Append(adr).Append(" ");
+            //    }             
+            //    sb.AppendLine().Append("Temat: ").Append(subject).AppendLine().Append("Data: ").Append(date).AppendLine().Append(body).AppendLine().Append("______________________");
+            //    var txtblck = CreateTextBlock();
+            //    txtblck.Uid = i.ToString();
+            //    txtblck.Text = sb.ToString();
+            //    sb.Clear();
+            //    panel.Children.Add(txtblck);
+            //    i++;
+            //}
         }
         public void NewMessage(MimeMessage message)
         {
@@ -114,6 +114,23 @@ namespace MailBox
                 listofadrs.Add(addres.Address);
             }
             return listofadrs;
+        }
+
+        private void Button_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var btn = sender as Button;
+         //   btn.Background = Brushes.DimGray;
+            var grid = btn.Content as Grid;
+            grid.Children[3].Visibility = Visibility.Visible;
+            var controls = grid.Children;
+        }
+        private void Button_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var btn = sender as Button;
+            btn.Background = Brushes.White;
+            var grid = btn.Content as Grid;
+            grid.Children[3].Visibility = Visibility.Hidden;
+            var controls = grid.Children;
         }
     }
 }
