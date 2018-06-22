@@ -58,8 +58,22 @@ namespace MailBox.Send
             if (_openFileDialog.ShowDialog() == true)
             {
                 _attachments.Add(_openFileDialog.FileName);
-                attachments.Children.Add(new Attachment(_openFileDialog.SafeFileName));
+                attachments.Children.Add(GetNewAttachment(_openFileDialog));
             }
+        }
+
+        private Attachment GetNewAttachment(OpenFileDialog file)
+        {
+            Attachment attachment = new Attachment(file);
+            attachment.MouseLeftButtonDown += Attachment_MouseLeftButtonDown;
+            return attachment;
+        }
+
+        private void Attachment_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Attachment attachment = sender as Attachment;
+            _attachments.Remove(attachment.FilePath);
+            attachments.Children.Remove(attachment);
         }
 
         private SmtpClient GetSmtpClient()

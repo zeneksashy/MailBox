@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
             >
     <Grid>
-        <Border BorderThickness="1" BorderBrush="SteelBlue" Margin="10,0,0,0">
+        <Border BorderThickness="1" BorderBrush="SteelBlue" Margin="0,0,10,0">
             <TextBlock  x:Name="attachmentLabel" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="5,4,5,4" Background="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}"/>
         </Border>
     </Grid>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,10 +21,13 @@ namespace MailBox.Send
     /// </summary>
     public partial class Attachment : UserControl
     {
-        public Attachment(string fileName)
+        public string FilePath { get; private set; }
+        public string FileName { get { return attachmentLabel.Text; } private set { attachmentLabel.Text = value; } }
+        public Attachment(OpenFileDialog file)
         {
             InitializeComponent();
-            attachmentLabel.Text = fileName;
+            FileName = file.SafeFileName;
+            FilePath = file.FileName;
         }
     }
 }

@@ -10,7 +10,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="80"/>
             <RowDefinition Height="1*"/>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
@@ -59,10 +59,12 @@
         <TextBox Grid.Row="1" Margin="10" x:Name="bodyTextBox" />
 
         <DockPanel Grid.Row="2" VerticalAlignment="Center" Margin="10,0,10,0">
-            <StackPanel x:Name="attachments" HorizontalAlignment="Left" Orientation="Horizontal">
-                <Button x:Name="attachmentButton"  Content="Add attachment" Padding="10,3,10,3" Click="AttachmentButton_Click"/>
-            </StackPanel>
-            <Button x:Name="sendButton" HorizontalAlignment="Right" Content="Send" Padding="10,3,10,3" Click="SendButton_Click"/>
+            <Button x:Name="sendButton" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Send" Padding="10,3,10,3" Click="SendButton_Click"/>
+            <Button x:Name="attachmentButton" VerticalAlignment="Top"  Content="Add attachment" Padding="10,3,10,3" Click="AttachmentButton_Click" Margin="10,0,10,0"/>
+            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Stretch">
+                <StackPanel x:Name="attachments" Orientation="Horizontal">
+                </StackPanel>
+            </ScrollViewer>
         </DockPanel>
     </Grid>
 </Window>
