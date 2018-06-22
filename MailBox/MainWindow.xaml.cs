@@ -74,10 +74,6 @@ namespace MailBox
             inbox = imap.Inbox;
             inbox.Open(FolderAccess.ReadOnly);
             idle = new ImapIdle(inbox.Count);
-            foreach (var uid in inbox.Search(SearchQuery.NotSeen))
-            {
-                var message = inbox.GetMessage(uid);
-            }
         }
 
         #region private methods
@@ -114,6 +110,11 @@ namespace MailBox
             }
             Settings.Default.isSaved = true;
             Settings.Default.Save();
+        }
+
+        private void Reply_btn_Click(object sender, RoutedEventArgs e)
+        {
+            new Send.SendWindow(String.Join(";", _replyTo), "Re: " + _replySubject).Show();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -327,7 +328,18 @@ namespace MailBox
                 client.mails.Add(item);
                 msg.Add(item);
             }
+            foreach (var uid in inbox.Search(SearchQuery.NotSeen))
+            {
+                var message = inbox.GetMessage(uid);
+                var mess = new Message(message, false);
 
+            }
+            foreach (var uid in inbox.Search(SearchQuery.Seen))
+            {
+                var message = inbox.GetMessage(uid);
+                var mess = new Message(message, true);
+                messages.Add(mess);
+            }
             ChangeVisibilities();
         }
         /// <summary>
@@ -449,15 +461,10 @@ namespace MailBox
         }
         #endregion
 
-
-
         private List<string> _replyTo = new List<string>();
         private string _replySubject = "";
 
-        private void Reply_btn_Click(object sender, RoutedEventArgs e)
-        {
-            new Send.SendWindow(String.Join(";", _replyTo), "Re: " + _replySubject).Show();
-        }
+      
     }
 
 }

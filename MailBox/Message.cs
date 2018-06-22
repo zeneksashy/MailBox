@@ -10,15 +10,11 @@ namespace MailBox
     class Message
     {
         public MimeMessage mimeMessage { get; private set; }
-        public bool isRead { get;  set; }
-        public Message(MimeMessage msg, bool Read)
+        public bool isSeen { get;  set; }
+        public Message(MimeMessage msg, bool Seen)
         {
             mimeMessage = msg;
-            isRead = Read;
-            //foreach (var uid in folder.Search(SearchQuery.NotSeen))
-            //{
-            //    var message = folder.GetMessage(uid);
-            //}
+            isSeen = Seen;
         }
     }
 }
