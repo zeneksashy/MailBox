@@ -74,7 +74,6 @@ namespace MailBox
             inbox = imap.Inbox;
             inbox.Open(FolderAccess.ReadOnly);
             idle = new ImapIdle(inbox.Count);
-
         }
 
         #region private methods
@@ -111,6 +110,11 @@ namespace MailBox
             }
             Settings.Default.isSaved = true;
             Settings.Default.Save();
+        }
+
+        private void Reply_btn_Click(object sender, RoutedEventArgs e)
+        {
+            new Send.SendWindow(String.Join(";", _replyTo), "Re: " + _replySubject).Show();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -457,15 +461,10 @@ namespace MailBox
         }
         #endregion
 
-
-
         private List<string> _replyTo = new List<string>();
         private string _replySubject = "";
 
-        private void Reply_btn_Click(object sender, RoutedEventArgs e)
-        {
-            new Send.SendWindow(String.Join(";", _replyTo), "Re: " + _replySubject).Show();
-        }
+      
     }
 
 }
