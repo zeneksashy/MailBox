@@ -100,25 +100,21 @@ namespace MailBox
                 button.Background = Brushes.White;
                 button.Foreground = Brushes.Black;
                 button.BorderBrush = Brushes.White;
+                button.Uid = i.ToString();
                 button.MouseEnter += Button_MouseEnter;
                 button.MouseLeave += Button_MouseLeave;
+                button.Click += Button_Click;
                 button.Content = CreateGrid(msg);
                 panel.Children.Add(button);
+                i++;
             }
+
         }
         public void NewMessage(MimeMessage message)
         {
 
         }
-        private TextBlock CreateTextBlock()
-        {
-            var txtblck = new TextBlock();
-            txtblck.MouseEnter += TextBlock_MouseEnter;
-            txtblck.MouseLeave += TextBlock_MouseLeave;
-            txtblck.PreviewMouseDown += TextBlock_Click;
-            txtblck.Foreground = Brushes.Black;
-            return txtblck;
-        }
+      
         private string Splitted(string str)
         {
             var split= str.Split();
@@ -137,10 +133,10 @@ namespace MailBox
             }
             return body;
         }
-        private void TextBlock_Click(object sender, EventArgs arg)
+        private void Button_Click(object sender, EventArgs arg)
         {
-            var block = sender as TextBlock;
-            int uid = int.Parse(block.Uid);
+            var button = sender as Button;
+            int uid = int.Parse(button.Uid);
             MainWindow win = App.Current.MainWindow as MainWindow;
             win.OpenInBrowser(uid);
 
