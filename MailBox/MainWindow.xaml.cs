@@ -74,10 +74,7 @@ namespace MailBox
             inbox = imap.Inbox;
             inbox.Open(FolderAccess.ReadOnly);
             idle = new ImapIdle(inbox.Count);
-            foreach (var uid in inbox.Search(SearchQuery.NotSeen))
-            {
-                var message = inbox.GetMessage(uid);
-            }
+
         }
       
         #region private methods
@@ -327,7 +324,18 @@ namespace MailBox
                 client.mails.Add(item);
                 msg.Add(item);
             }
+            foreach (var uid in inbox.Search(SearchQuery.NotSeen))
+            {
+                var message = inbox.GetMessage(uid);
+                var mess = new Message(message, false);
 
+            }
+            foreach (var uid in inbox.Search(SearchQuery.Seen))
+            {
+                var message = inbox.GetMessage(uid);
+                var mess = new Message(message, true);
+                messages.Add(mess);
+            }
             ChangeVisibilities();
         }
         /// <summary>
