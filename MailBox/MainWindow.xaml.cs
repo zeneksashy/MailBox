@@ -33,9 +33,9 @@ using System.Text.RegularExpressions;
 //Changing hosts -- done
 //imap idle -- almost done, 
 //inbox add ?
-//message deleting -- almost done, need testing
-//message updating
-//Checking on startup if any new messages reciewed
+//message deleting -- almost done, need testing -- nie 
+//message updating 
+//Checking on startup if any new messages reciewed -- done
 
 namespace MailBox
 {
@@ -58,6 +58,7 @@ namespace MailBox
         HashSet<string> tempdirs = new HashSet<string>();
         IMailFolder inbox;
         ImapIdle idle;
+        private HashSet<int> uids = new HashSet<int>();
 
         #endregion
 
@@ -118,13 +119,14 @@ namespace MailBox
             original = msg;
             msg = features.SortBy(SortFilters.Date, Order.DSC);
             mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
+           //Array.Sort<MimeMessage,int>()
         }
         #region event handlers
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             SaveToFile();
         }
-
+     
         private void Reply_btn_Click(object sender, RoutedEventArgs e)
         {
             new Send.SendWindow(String.Join(";", _replyTo), "Re: " + _replySubject).Show();
@@ -326,6 +328,7 @@ namespace MailBox
 
         private void RemoveFromServer(int uid)
         {
+          //  imap.Inbox.Fetch()
             imap.Inbox.AddFlags(uid, MessageFlags.Deleted, false);
             imap.Inbox.Expunge();
         }
@@ -349,19 +352,27 @@ namespace MailBox
                 client.mails.Add(item);
                 msg.Add(item);
             }
-            foreach (var uid in inbox.Search(SearchQuery.NotSeen))
-            {
-                var message = inbox.GetMessage(uid);
-                var mess = new Message(message, false);
+            //foreach (var uid in inbox.Search(SearchQuery.NotSeen))
+            //{
+            //    var message = inbox.GetMessage(uid);
+            //    var mess = new Message(message, false);
 
-            }
-            foreach (var uid in inbox.Search(SearchQuery.Seen))
-            {
-                var message = inbox.GetMessage(uid);
-                var mess = new Message(message, true);
-                messages.Add(mess);
-            }
+            //}
+            //foreach (var uid in inbox.Search(SearchQuery.Seen))
+            //{
+            //    var message = inbox.GetMessage(uid);
+            //    var mess = new Message(message, true);
+            //    messages.Add(mess);
+            //}
             ChangeVisibilities();
+        }
+        private void LoadMessages(int index)
+        {
+            foreach (var item in Fetch(inbox,index))
+            {
+                client.mails.Add(item);
+                msg.Add(item);
+            }
         }
         /// <summary>
         /// Load mails from path and adds them to msg list
@@ -374,8 +385,11 @@ namespace MailBox
             {
                 msg.Add(MimeMessage.Load(file));
             }
+            if (Check())
+                LoadMessages(msg.Count);
             ChangeVisibilities();
         }
+        private bool Check() => msg.Count < inbox.Count;
 
         /// <summary>
         /// fetches all messages in inbox
@@ -386,6 +400,15 @@ namespace MailBox
         {
             for (int i = 0; i < inbox.Count; i++)
             {
+                uids.Add(i);
+                yield return inbox.GetMessage(i);
+            }
+        }
+        IEnumerable<MimeMessage> Fetch(IMailFolder inbox,int startindex)
+        {
+            for (int i = startindex; i < inbox.Count; i++)
+            {
+                uids.Add(i);
                 yield return inbox.GetMessage(i);
             }
         }
@@ -437,17 +460,6 @@ namespace MailBox
             msg.Add(message);
             ShowMessages();
         }
-        public void FetchIdle()
-        {
-            inbox = imap.Inbox;
-            inbox.Open(FolderAccess.ReadOnly);
-            int count = msg.Count;
-            for (int i = count; i < inbox.Count; i++)
-            {
-                msg.Add(inbox.GetMessage(i));
-            }
-        }
-
         /// <summary>
         /// Deletes email on a given uid on server side
         /// </summary>
@@ -459,10 +471,7 @@ namespace MailBox
             RemoveFromPc(uid);
             RemoveFromServer(uid);
             msg.RemoveAt(uid);
-
         }
-
-
         /// <summary>
         /// Shows a message in a browser
         /// </summary>
