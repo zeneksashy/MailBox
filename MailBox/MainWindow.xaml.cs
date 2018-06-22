@@ -71,12 +71,21 @@ namespace MailBox
             imap = new ImapClient();
             imap.Connect(client.Host, client.Port, true);
             imap.Authenticate(client.Email, client.Password);
+            imap.Inbox.MessageFlagsChanged += Inbox_MessageFlagsChanged;
             inbox = imap.Inbox;
-            inbox.Open(FolderAccess.ReadOnly);
+            inbox.Open(FolderAccess.ReadWrite);
             idle = new ImapIdle(inbox.Count);
         }
 
+
+
         #region private methods
+        private void Inbox_MessageFlagsChanged(object sender, MessageFlagsChangedEventArgs e)
+        {
+            if (e.Flags == MessageFlags.Deleted)
+                MessageBox.Show("Message deleted");
+        }
+
         private void ChangeVisibilities()
         {
             ShowMessages();
@@ -399,7 +408,6 @@ namespace MailBox
                 i++;
             }
         }
-
         /// <summary>
         /// Deletes temporary files from appdata directory
         /// </summary>
@@ -427,6 +435,19 @@ namespace MailBox
                 msg.Add(inbox.GetMessage(i));
             }
         }
+
+        /// <summary>
+        /// Deletes email on a given uid on server side
+        /// </summary>
+        /// <param name="uid">uid of message to delete</param>
+        /// 
+        public void DeleteMessage(int uid)
+        {
+            imap.Inbox.AddFlags(uid, MessageFlags.Deleted, false);
+            imap.Inbox.Expunge();
+        }
+
+
         /// <summary>
         /// Shows a message in a browser
         /// </summary>
