@@ -30,6 +30,17 @@ namespace MailBox.Send
 
         public SendWindow()
         {
+            Initialize();
+        }
+
+        public SendWindow(string to)
+        {
+            Initialize();
+            toTextBox.Text = to;
+        }
+
+        private void Initialize()
+        {
             InitializeComponent();
 
             _openFileDialog = new OpenFileDialog
