@@ -26,16 +26,16 @@ using System.Text.RegularExpressions;
 //Show Attachments --  almost done, saving left -- done
 // Reply to -- done
 // Send msg -- done
-//Filtering -- need testing 
+//Filtering -- need testing -- done
 //Sorting  -- done
-//Nicer look
+//Nicer look --1/10 done
 //Logout -- done 
 //Changing hosts -- done
 //imap idle -- almost done, 
 //inbox add ?
-//message deleting
+//message deleting -- almost done, need testing
 //message updating
-
+//Checking on startup if any new messages reciewed
 
 namespace MailBox
 {
@@ -45,6 +45,8 @@ namespace MailBox
     public partial class MainWindow : Window
     {
         #region private fileds
+        private List<string> _replyTo = new List<string>();
+        private string _replySubject = "";
         Imapfeatures features;
         string path;
         Client client = Client.GetInstance();
@@ -71,21 +73,37 @@ namespace MailBox
             imap = new ImapClient();
             imap.Connect(client.Host, client.Port, true);
             imap.Authenticate(client.Email, client.Password);
-            //imap.Inbox.MessageFlagsChanged += Inbox_MessageFlagsChanged;
+            imap.Inbox.MessageFlagsChanged += Inbox_MessageFlagsChanged;
             inbox = imap.Inbox;
             inbox.Open(FolderAccess.ReadWrite);
             idle = new ImapIdle(inbox.Count);
         }
 
 
-
         #region private methods
-        //private void Inbox_MessageFlagsChanged(object sender, MessageFlagsChangedEventArgs e)
-        //{
-        //    if (e.Flags == MessageFlags.Deleted)
-        //        MessageBox.Show("Message deleted");
-        //}
-
+        private void Inbox_MessageFlagsChanged(object sender, MessageFlagsChangedEventArgs e)
+        {
+            if (e.Flags == MessageFlags.Deleted)
+                MessageBox.Show("Message deleted");
+        }
+        private void SaveToFile()
+        {
+            imap.Disconnect(true);
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            int i = 1;
+            var sb = new StringBuilder(path);
+            foreach (var item in msg)
+            {
+                sb.Append("\\msg").Append(i).Append(".eml");
+                item.WriteTo(sb.ToString());
+                i++;
+                sb.Clear();
+                sb.Append(path);
+            }
+            Settings.Default.isSaved = true;
+            Settings.Default.Save();
+        }
         private void ChangeVisibilities()
         {
             ShowMessages();
@@ -104,21 +122,7 @@ namespace MailBox
         #region event handlers
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            imap.Disconnect(true);
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-            int i = 1;
-            var sb = new StringBuilder(path);
-            foreach (var item in msg)
-            {
-                sb.Append("\\msg").Append(i).Append(".eml");
-                item.WriteTo(sb.ToString());
-                i++;
-                sb.Clear();
-                sb.Append(path);
-            }
-            Settings.Default.isSaved = true;
-            Settings.Default.Save();
+            SaveToFile();
         }
 
         private void Reply_btn_Click(object sender, RoutedEventArgs e)
@@ -320,6 +324,18 @@ namespace MailBox
             new Send.SendWindow().Show();
         }
 
+        private void RemoveFromServer(int uid)
+        {
+            imap.Inbox.AddFlags(uid, MessageFlags.Deleted, false);
+            imap.Inbox.Expunge();
+        }
+        private void RemoveFromPc(int uid)
+        {
+            if (Directory.Exists(path + "\\msg" + uid + ".eml"))
+                File.Delete(path + "\\msg" + uid + ".eml");
+
+        }
+
         #endregion
 
         #region imap methods
@@ -439,28 +455,13 @@ namespace MailBox
         /// 
         public void DeleteMessage(int uid)
         {
-            imap.Inbox.AddFlags(uid, MessageFlags.Deleted, false);
-            imap.Inbox.Expunge();
+            uid--;
+            RemoveFromPc(uid);
+            RemoveFromServer(uid);
+            msg.RemoveAt(uid);
 
         }
-        private void RemoveFromPc(int uid)
-        {
-            //if (!Directory.Exists(path))
 
-            //int i = 1;
-            //var sb = new StringBuilder(path);
-            //foreach (var item in msg)
-            //{
-            //    sb.Append("\\msg").Append(i).Append(".eml");
-            //    item.WriteTo(sb.ToString());
-            //    i++;
-            //    sb.Clear();
-            //    sb.Append(path);
-            //}
-            //Settings.Default.isSaved = true;
-            //Settings.Default.Save();
-
-        }
 
         /// <summary>
         /// Shows a message in a browser
@@ -496,8 +497,7 @@ namespace MailBox
         }
         #endregion
 
-        private List<string> _replyTo = new List<string>();
-        private string _replySubject = "";
+        
 
       
     }

@@ -27,6 +27,7 @@ namespace MailBox
         {
             InitializeComponent();
         }
+        #region Generators
         private Grid CreateGrid(MimeMessage msg)
         {
             int i = 0;
@@ -34,26 +35,16 @@ namespace MailBox
             //grid.Margin = new Thickness(0,0,10,0);
             GenerateRowsAndColumns(grid);
             var from = getMailbox(msg.From.Mailboxes);
-            GenerateTextBlock(grid,GetString(msg.To.Mailboxes),ref i);
+            GenerateTextBlock(grid, GetString(msg.To.Mailboxes), ref i);
             GenerateTextBlock(grid, GetString(msg.From.Mailboxes), ref i);
             GenerateTextBlock(grid, msg.Subject, ref i);
             GenerateImage(grid);
             return grid;
         }
-        private string GetString(IEnumerable<MailboxAddress> addresses)
-        {
-            var addrs = getMailbox(addresses);
-            string str = String.Empty;
-            foreach (var item in addrs)
-            {
-                str += item;
-            }
-            return str;
-        }
         private void GenerateImage(Grid grid)
         {
             var img = new Image();
-            var uri = new Uri(@"/images/x_button.png",UriKind.Relative);
+            var uri = new Uri(@"/images/x_button.png", UriKind.Relative);
             var bitmap = new BitmapImage(uri);
             img.Source = bitmap;
             img.Visibility = Visibility.Hidden;
@@ -62,16 +53,7 @@ namespace MailBox
             Grid.SetColumn(img, 1);
             Grid.SetRow(img, 0);
         }
-
-        private void Img_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            Button button = ((sender as Image).Parent as Grid).Parent as Button;
-            //TODO Delete email on server side
-            mainWindow.DeleteMessage(int.Parse(button.Uid));
-            panel.Children.Remove(button);
-        }
-
-        private void GenerateTextBlock(Grid grid, string text,ref int ix)
+        private void GenerateTextBlock(Grid grid, string text, ref int ix)
         {
             var block = new TextBlock();
             block.Text = text;
@@ -101,6 +83,47 @@ namespace MailBox
             col.Width = new GridLength(width);
             return col;
         }
+        #endregion
+        #region event handlers
+        private void Button_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var btn = sender as Button;
+            var grid = btn.Content as Grid;
+            grid.Children[3].Visibility = Visibility.Visible;
+            var controls = grid.Children;
+        }
+        private void Button_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var btn = sender as Button;
+            var grid = btn.Content as Grid;
+            grid.Children[3].Visibility = Visibility.Hidden;
+            var controls = grid.Children;
+        }
+        private void Button_Click(object sender, EventArgs arg)
+        {
+            var button = sender as Button;
+            int uid = int.Parse(button.Uid);
+            mainWindow.OpenInBrowser(uid);
+
+        }
+        private void Img_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Button button = ((sender as Image).Parent as Grid).Parent as Button;
+            //TODO Delete email on server side
+            mainWindow.DeleteMessage(int.Parse(button.Uid));
+            panel.Children.Remove(button);
+        }
+        #endregion
+        private string GetString(IEnumerable<MailboxAddress> addresses)
+        {
+            var addrs = getMailbox(addresses);
+            string str = String.Empty;
+            foreach (var item in addrs)
+            {
+                str += item;
+            }
+            return str;
+        }   
         public void ShowMessageList(List<MimeMessage> messages)
         {
             panel.Children.Clear();
@@ -143,23 +166,7 @@ namespace MailBox
             }
             return body;
         }
-        private void Button_Click(object sender, EventArgs arg)
-        {
-            var button = sender as Button;
-            int uid = int.Parse(button.Uid);
-            mainWindow.OpenInBrowser(uid);
-
-        }
-        private void TextBlock_MouseLeave(object sender, MouseEventArgs arg)
-        {
-            var block = sender as TextBlock;
-            block.Foreground = Brushes.Black;
-        }
-        private void TextBlock_MouseEnter(object sender, MouseEventArgs arg)
-        {
-            var block = sender as TextBlock;
-            block.Foreground = Brushes.Blue;
-        }
+       
         private List<string> getMailbox(IEnumerable<MailboxAddress> addresses)
         {
             var listofadrs = new List<string>();
@@ -170,21 +177,6 @@ namespace MailBox
             return listofadrs;
         }
 
-        private void Button_MouseEnter(object sender, MouseEventArgs e)
-        {
-            var btn = sender as Button;
-            btn.Background = Brushes.AliceBlue;
-            var grid = btn.Content as Grid;
-            grid.Children[3].Visibility = Visibility.Visible;
-            var controls = grid.Children;
-        }
-        private void Button_MouseLeave(object sender, MouseEventArgs e)
-        {
-            var btn = sender as Button;
-            btn.Background = Brushes.White;
-            var grid = btn.Content as Grid;
-            grid.Children[3].Visibility = Visibility.Hidden;
-            var controls = grid.Children;
-        }
+     
     }
 }

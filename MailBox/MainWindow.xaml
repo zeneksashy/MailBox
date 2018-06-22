@@ -20,7 +20,7 @@
         <ProgressBar x:Name="bar" HorizontalAlignment="Center" Height="55" Grid.Row="2" MaxWidth="1200" MinWidth="1200"  VerticalAlignment="Top"  Minimum="0" Maximum="100" IsIndeterminate="True" Visibility="Visible" Panel.ZIndex="3" Grid.Column="1" />
         <Label x:Name="progress_label" Content="Ładowanie wiadomości" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Top" Width="506" Height="92" FontSize="48" Visibility="Visible" Panel.ZIndex="4" Grid.Column="1"/>
         <WebBrowser x:Name="browser" HorizontalAlignment="Left"  Grid.Row="1"  VerticalAlignment="Bottom" Panel.ZIndex="5" Visibility="Visible" Grid.Column="1"/>
-        <local:MailList x:Name="mails" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Grid.Column="0" Grid.RowSpan="3"  />
+        <local:MailList x:Name="mails" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Grid.Column="0" Grid.RowSpan="3" Margin="0,25,0,0" />
         <TextBlock x:Name="text" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left"  TextWrapping="Wrap"  VerticalAlignment="Bottom"  Height="56" Width="1223"></TextBlock>
         <Button x:Name="reply_btn" Content="Reply" Height="30" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Right" Grid.Row="0" Grid.Column="1" FontSize="16" Visibility="Hidden" Click="Reply_btn_Click"/>
         <Menu HorizontalAlignment="Left" Height="24" VerticalAlignment="Top" Grid.ColumnSpan="3">
