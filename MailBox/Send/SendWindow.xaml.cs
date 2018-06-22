@@ -95,8 +95,10 @@ namespace MailBox.Send
 
         private void SendButton_Click(object sender, RoutedEventArgs e)
         {
-            SendMessage();
-
+            if (string.IsNullOrEmpty(toTextBox.Text))
+                MessageBox.Show("Receiver box cannot be empty");
+            else
+                SendMessage();
         }
 
         private MailMessage GetMailMessage()
