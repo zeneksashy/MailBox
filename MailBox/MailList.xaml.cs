@@ -64,6 +64,7 @@ namespace MailBox
         {
             panel.Children.Remove((((sender as Image).Parent as Grid).Parent as Button));
             //TODO Delete email on server side
+            //TODO usuwanie z listy msg w mainwindow
         }
 
         private void GenerateTextBlock(Grid grid, string text,ref int ix)
