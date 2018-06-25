@@ -62,8 +62,7 @@ namespace MailBox.BrowserPanel
 
         private void Attach_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            MimeEntity attachment = (sender as Attachment).Attach;
-
+            MimeEntity attachment = (sender as Attachment).Attach; 
 
             SaveFileDialog saveFileDialog = new SaveFileDialog()
             {
@@ -71,6 +70,7 @@ namespace MailBox.BrowserPanel
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 DefaultExt = attachment.ContentType.Name.Split('.').Last(),
                 Filter = "All files (*.*)|*.*",
+                AddExtension = true,
             };
 
             if (saveFileDialog.ShowDialog() == true)
