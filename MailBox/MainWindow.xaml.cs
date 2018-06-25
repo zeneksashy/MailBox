@@ -50,8 +50,8 @@ namespace MailBox
         Imapfeatures features;
         string path;
         Client client = Client.GetInstance();
-        List<int> Seen = new List<int>();
-        List<bool> isSeen = new List<bool>();
+        List<int> seen = new List<int>();
+        List<int> notSeen = new List<int>();
         List<MimeMessage> original = new List<MimeMessage>();
         List<MimeMessage> msg = new List<MimeMessage>();
         ImapClient imap;
