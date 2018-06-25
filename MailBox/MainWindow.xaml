@@ -9,7 +9,7 @@
         Title="MainWindow" MinHeight="300" MinWidth="700" Height="864" Width="1342" Loaded="Window_Loaded" ContentRendered="Window_ContentRendered" Closing="Window_Closing" Closed="Window_Closed">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="17*"/>
+            <ColumnDefinition Width="18*"/>
             <ColumnDefinition Width="73*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -19,8 +19,8 @@
         <ProgressBar x:Name="bar" HorizontalAlignment="Center" Height="55" Grid.Row="2" MaxWidth="1200" MinWidth="1200"  VerticalAlignment="Top"  Minimum="0" Maximum="100" IsIndeterminate="True" Visibility="Visible" Panel.ZIndex="3" Grid.Column="1" />
         <Label x:Name="progress_label" Content="Ładowanie wiadomości" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Top" Width="506" Height="92" FontSize="48" Visibility="Visible" Panel.ZIndex="4" Grid.Column="1"/>
         <browserpanel:BrowserPanel x:Name="browserPanel" Grid.Row="1" Grid.Column="1"/>
-        <local:MailList x:Name="mails" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Grid.Column="0" Grid.RowSpan="3"  />
-        <Menu HorizontalAlignment="Left" Height="24" VerticalAlignment="Top" Grid.ColumnSpan="3">
+        <local:MailList x:Name="mails" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Grid.Column="0" Grid.RowSpan="2" Margin="0,30"  />
+        <Menu HorizontalAlignment="Left" Height="24" VerticalAlignment="Top" Grid.ColumnSpan="2">
             <Button Content="Logout" Click="Button_Click" Padding="10,2,10,2"/>
             <Button x:Name="newMessageButton" Content="New message" Padding="10,2,10,2" Click="NewMessageButton_Click"/>
             <MenuItem Header="Filter">
