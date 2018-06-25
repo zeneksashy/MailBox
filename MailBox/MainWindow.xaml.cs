@@ -50,15 +50,16 @@ namespace MailBox
         Imapfeatures features;
         string path;
         Client client = Client.GetInstance();
-        List<int> seen = new List<int>();
-        List<int> notSeen = new List<int>();
+        List<uint> seen = new List<uint>();
+        List<uint> notSeen = new List<uint>();
+        List<MimeMessage> unSorted = new List<MimeMessage>();
         List<MimeMessage> original = new List<MimeMessage>();
         List<MimeMessage> msg = new List<MimeMessage>();
         ImapClient imap;
         HashSet<string> tempdirs = new HashSet<string>();
         IMailFolder inbox;
         ImapIdle idle;
-        private HashSet<int> uids = new HashSet<int>();
+      //  private List<int> uids = new List<int>();
       //  private Dictionary<int, MimeMessage> messages = new Dictionary<int, MimeMessage>(); 
 
         #endregion
@@ -328,8 +329,8 @@ namespace MailBox
 
         private void RemoveFromServer(int uid)
         {
-          //  imap.Inbox.Fetch()
-            imap.Inbox.AddFlags(uid, MessageFlags.Deleted, false);
+            var i = unSorted.IndexOf(msg.ElementAt(uid));
+            imap.Inbox.AddFlags(i, MessageFlags.Deleted, false);
             imap.Inbox.Expunge();
         }
         private void RemoveFromPc(int uid)
@@ -350,21 +351,21 @@ namespace MailBox
             foreach (var item in Fetch(inbox))
             {
                 client.mails.Add(item);
+                unSorted.Add(item);
                 msg.Add(item);
             }
-            //foreach (var uid in inbox.Search(SearchQuery.NotSeen))
-            //{
+            foreach (var uid in inbox.Search(SearchQuery.NotSeen))
+            {
+                notSeen.Add(uid.Id);             
+               // var message = inbox.GetMessage(uid);
+                //unSorted.Add(message);
+            }
+            foreach (var uid in inbox.Search(SearchQuery.Seen))
+            {
+                seen.Add(uid.Id);
             //    var message = inbox.GetMessage(uid);
-            //    var mess = new Message(message, false,uid.Id);
-            //    messages.Add(mess);
-
-            //}
-            //foreach (var uid in inbox.Search(SearchQuery.Seen))
-            //{
-            //    var message = inbox.GetMessage(uid);
-            //    var mess = new Message(message, true,uid.Id);
-            //    messages.Add(mess);
-            //}
+            //    unSorted.Add(message);
+            }
             ChangeVisibilities();
         }
         private void LoadMessages(int index)
@@ -401,7 +402,7 @@ namespace MailBox
         {
             for (int i = 0; i < inbox.Count; i++)
             {
-                uids.Add(i);
+               // uids.Add(i);
                 yield return inbox.GetMessage(i);
             }
         }
@@ -409,7 +410,7 @@ namespace MailBox
         {
             for (int i = startindex; i < inbox.Count; i++)
             {
-                uids.Add(i);
+               // uids.Add(i);
                 yield return inbox.GetMessage(i);
             }
         }
@@ -471,7 +472,9 @@ namespace MailBox
             uid--;
             RemoveFromPc(uid);
             RemoveFromServer(uid);
-            msg.RemoveAt(uid);
+           var index = unSorted.IndexOf(msg.ElementAt(uid));
+           unSorted.RemoveAt(index);
+           msg.RemoveAt(uid);
         }
         /// <summary>
         /// Shows a message in a browser
