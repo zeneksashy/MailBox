@@ -50,8 +50,8 @@ namespace MailBox
         Imapfeatures features;
         string path;
         Client client = Client.GetInstance();
-        List<Message> messages = new List<Message>();
-        List<Message> originial_2 = new List<Message>();
+        List<int> Seen = new List<int>();
+        List<bool> isSeen = new List<bool>();
         List<MimeMessage> original = new List<MimeMessage>();
         List<MimeMessage> msg = new List<MimeMessage>();
         ImapClient imap;
@@ -59,6 +59,7 @@ namespace MailBox
         IMailFolder inbox;
         ImapIdle idle;
         private HashSet<int> uids = new HashSet<int>();
+      //  private Dictionary<int, MimeMessage> messages = new Dictionary<int, MimeMessage>(); 
 
         #endregion
 
@@ -78,6 +79,7 @@ namespace MailBox
             inbox = imap.Inbox;
             inbox.Open(FolderAccess.ReadWrite);
             idle = new ImapIdle(inbox.Count);
+ 
         }
 
 
@@ -355,13 +357,14 @@ namespace MailBox
             //foreach (var uid in inbox.Search(SearchQuery.NotSeen))
             //{
             //    var message = inbox.GetMessage(uid);
-            //    var mess = new Message(message, false);
+            //    var mess = new Message(message, false,uid.Id);
+            //    messages.Add(mess);
 
             //}
             //foreach (var uid in inbox.Search(SearchQuery.Seen))
             //{
             //    var message = inbox.GetMessage(uid);
-            //    var mess = new Message(message, true);
+            //    var mess = new Message(message, true,uid.Id);
             //    messages.Add(mess);
             //}
             ChangeVisibilities();
@@ -395,7 +398,7 @@ namespace MailBox
         /// fetches all messages in inbox
         /// </summary>
         /// <param name="inbox"> inbox</param>
-        /// <returns> retruns abstract list with mails </returns>
+        /// <returns> retruns abstract list of mails </returns>
         IEnumerable<MimeMessage> Fetch(IMailFolder inbox)
         {
             for (int i = 0; i < inbox.Count; i++)
@@ -413,7 +416,7 @@ namespace MailBox
             }
         }
         /// <summary>
-        /// Used to get mailboxes from "TO" and "From" list and return them as string
+        /// Used to get mailboxes from "To" and "From" list and return them as string
         /// </summary>
         /// <param name="addresses"> list of mailboxes</param>
         /// <returns>list of mialboxes as string</returns>

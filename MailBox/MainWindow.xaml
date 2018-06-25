@@ -109,6 +109,5 @@
             <StackPanel x:Name="panel"  Height="91" Orientation="Horizontal">
             </StackPanel>
         </ScrollViewer>
-
     </Grid>
 </Window>

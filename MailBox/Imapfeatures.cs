@@ -42,16 +42,16 @@ namespace MailBox
     }
 
     #endregion
-     class SortBySubject :IComparer<MimeMessage>
-    {
+    // class SortBySubject :IComparer<MimeMessage>
+    //{
   
 
-        public int Compare(MimeMessage left, MimeMessage right)
-        {
-            string subject1
-           // throw new NotImplementedException();
-        }
-    }
+    // //   public int Compare(MimeMessage left, MimeMessage right)
+    //   // {
+    //     //   string subject1;
+    //       // throw new NotImplementedException();
+    //    //}
+    //}
     class Imapfeatures
     {
         HashSet<int> uids = new HashSet<int>();
