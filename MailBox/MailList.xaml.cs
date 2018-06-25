@@ -128,6 +128,7 @@ namespace MailBox
         {
             panel.Children.Clear();
             int i = 1;
+            int index = 0;
             foreach (var msg in messages)
             {
                 var button = new Button();
@@ -142,6 +143,7 @@ namespace MailBox
                 button.Content = CreateGrid(msg);
                 panel.Children.Add(button);
                 i++;
+                index++;
             }
         }
         public void NewMessage(MimeMessage message)

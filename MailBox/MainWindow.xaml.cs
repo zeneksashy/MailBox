@@ -31,12 +31,12 @@ using System.Text.RegularExpressions;
 //Nicer look --1/10 done
 //Logout -- done 
 //Changing hosts -- done
-//imap idle -- almost done, 
+//imap idle -- almost done, -- done
 //inbox add ?
-//message deleting -- almost done, need testing -- nie 
+//message deleting -- almost done, need testing -- 
 //message updating 
 //Checking on startup if any new messages reciewed -- done
-
+//bug to fix  -- 
 namespace MailBox
 {
     /// <summary>
@@ -59,8 +59,6 @@ namespace MailBox
         HashSet<string> tempdirs = new HashSet<string>();
         IMailFolder inbox;
         ImapIdle idle;
-      //  private List<int> uids = new List<int>();
-      //  private Dictionary<int, MimeMessage> messages = new Dictionary<int, MimeMessage>(); 
 
         #endregion
 
@@ -98,7 +96,7 @@ namespace MailBox
                 Directory.CreateDirectory(path);
             int i = 1;
             var sb = new StringBuilder(path);
-            foreach (var item in msg)
+            foreach (var item in unSorted)
             {
                 sb.Append("\\msg").Append(i).Append(".eml");
                 item.WriteTo(sb.ToString());
@@ -121,7 +119,6 @@ namespace MailBox
             original = msg;
             msg = features.SortBy(SortFilters.Date, Order.DSC);
             mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
-           //Array.Sort<MimeMessage,int>()
         }
         #region event handlers
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -338,7 +335,6 @@ namespace MailBox
         {
             if (Directory.Exists(path + "\\msg" + uid + ".eml"))
                 File.Delete(path + "\\msg" + uid + ".eml");
-
         }
 
         #endregion
@@ -386,13 +382,15 @@ namespace MailBox
             var files = Directory.GetFiles(path);
             foreach (var file in files)
             {
-                msg.Add(MimeMessage.Load(file));
+                unSorted.Add(MimeMessage.Load(file));
+
             }
             if (Check())
-                LoadMessages(msg.Count);
+                LoadMessages(unSorted.Count);
+            msg = unSorted;
             ChangeVisibilities();
         }
-        private bool Check() => msg.Count < inbox.Count;
+        private bool Check() => unSorted.Count < inbox.Count;
 
         /// <summary>
         /// fetches all messages in inbox
@@ -445,6 +443,7 @@ namespace MailBox
         #region public methods
         public void AddToList(MimeMessage message)
         {
+            unSorted.Add(message);
             msg.Add(message);
             ShowMessages();
         }
