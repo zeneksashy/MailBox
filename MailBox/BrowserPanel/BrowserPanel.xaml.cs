@@ -91,10 +91,10 @@ namespace MailBox.BrowserPanel
                     }
                 }
                 (sender as Attachment).SetDownloaded();
+
+                if (MessageBox.Show("Open file?", attachment.ContentType.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    System.Diagnostics.Process.Start(saveFileDialog.FileName);
             }
-            if (MessageBox.Show("Open file?", attachment.ContentType.Name, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                System.Diagnostics.Process.Start(saveFileDialog.FileName);
-            
         }
 
         private void FillTextBlocks()
