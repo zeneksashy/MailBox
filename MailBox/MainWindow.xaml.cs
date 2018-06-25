@@ -458,8 +458,7 @@ namespace MailBox
             uid--;
             RemoveFromPc(uid);
             RemoveFromServer(uid);
-           var index = unSorted.IndexOf(msg.ElementAt(uid));
-           unSorted.RemoveAt(index);
+           unSorted.Remove(msg.ElementAt(uid));
            msg.RemoveAt(uid);
         }
         /// <summary>
