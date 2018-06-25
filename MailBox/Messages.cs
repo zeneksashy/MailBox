@@ -21,7 +21,6 @@ namespace MailBox
         ImapClient imap;
         IMailFolder inbox;
         string path;
-        //TODO
 
         public Messages(ImapClient imap,IMailFolder inbox,string path)
         {
@@ -56,7 +55,6 @@ namespace MailBox
             var i = unSorted.IndexOf(messages.ElementAt(uid));
             imap.Inbox.AddFlags(i, MessageFlags.Deleted, false);
             imap.Inbox.Expunge();
-         //   inbox.
         }
         public void RemoveFromPc(int uid)
         {
@@ -127,7 +125,6 @@ namespace MailBox
         {
             for (int i = startindex; i < inbox.Count; i++)
             {
-                // uids.Add(i);
                 yield return inbox.GetMessage(i);
             }
         }
