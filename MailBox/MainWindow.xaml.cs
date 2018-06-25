@@ -76,7 +76,7 @@ namespace MailBox
             imap = new ImapClient();
             imap.Connect(client.Host, client.Port, true);
             imap.Authenticate(client.Email, client.Password);
-            imap.Inbox.MessageFlagsChanged += Inbox_MessageFlagsChanged;
+            //imap.Inbox.MessageFlagsChanged += Inbox_MessageFlagsChanged; powiadomienie o usunięciu wiadomości
             inbox = imap.Inbox;
             inbox.Open(FolderAccess.ReadWrite);
             idle = new ImapIdle(inbox.Count);
@@ -85,11 +85,12 @@ namespace MailBox
 
 
         #region private methods
-        private void Inbox_MessageFlagsChanged(object sender, MessageFlagsChangedEventArgs e)
-        {
-            if (e.Flags == MessageFlags.Deleted)
-                MessageBox.Show("Message deleted");
-        }
+        // Powiadomienie o usunięciu wiadomości, niezbyt potrzebne
+        //private void Inbox_MessageFlagsChanged(object sender, MessageFlagsChangedEventArgs e)
+        //{
+        //    if (e.Flags == MessageFlags.Deleted)
+        //        MessageBox.Show("Message deleted");
+        //} 
         private void SaveToFile()
         {
             imap.Disconnect(true);
@@ -429,22 +430,7 @@ namespace MailBox
             return listofadrs;
         }
         #endregion
-        private void ShowAttachments(MimeMessage msg)
-        {
-            // To właściwie jest narazie bezużyteczne
-            //var attachments = msg.Attachments;
-            //int i = 0;
-            //foreach (var attachment in attachments)
-            //{
-            //    var userctrl = new Attachment();
-            //    userctrl.Cursor = Cursors.Hand;
-            //    userctrl.Attach = attachment;
-            //    userctrl.PreviewMouseLeftButtonDown += UserCtrl_PreviewMouseDown;
-            //    userctrl.Uid = i.ToString();
-            //    userctrl.ChangeLabelName(attachment.ContentDisposition.FileName);
-            //    i++;
-            //}
-        }
+
         /// <summary>
         /// Deletes temporary files from appdata directory
         /// </summary>
