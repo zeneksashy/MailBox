@@ -429,22 +429,7 @@ namespace MailBox
             return listofadrs;
         }
         #endregion
-        private void ShowAttachments(MimeMessage msg)
-        {
-            // To właściwie jest narazie bezużyteczne
-            //var attachments = msg.Attachments;
-            //int i = 0;
-            //foreach (var attachment in attachments)
-            //{
-            //    var userctrl = new Attachment();
-            //    userctrl.Cursor = Cursors.Hand;
-            //    userctrl.Attach = attachment;
-            //    userctrl.PreviewMouseLeftButtonDown += UserCtrl_PreviewMouseDown;
-            //    userctrl.Uid = i.ToString();
-            //    userctrl.ChangeLabelName(attachment.ContentDisposition.FileName);
-            //    i++;
-            //}
-        }
+
         /// <summary>
         /// Deletes temporary files from appdata directory
         /// </summary>
