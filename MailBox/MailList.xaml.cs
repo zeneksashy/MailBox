@@ -20,7 +20,7 @@ namespace MailBox
     /// </summary>
     public partial class MailList : UserControl
     {
-        MainWindow mainWindow = App.Current.MainWindow as MainWindow;
+        MainWindow mainWindow;
 
 
         public MailList()
@@ -103,13 +103,14 @@ namespace MailBox
         {
             var button = sender as Button;
             int uid = int.Parse(button.Uid);
+            mainWindow = App.Current.MainWindow as MainWindow;
             mainWindow.OpenInBrowser(uid);
 
         }
         private void Img_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Button button = ((sender as Image).Parent as Grid).Parent as Button;
-            //TODO Delete email on server side
+            mainWindow = App.Current.MainWindow as MainWindow;
             mainWindow.DeleteMessage(int.Parse(button.Uid));
             panel.Children.Remove(button);
         }
