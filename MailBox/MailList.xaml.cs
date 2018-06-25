@@ -32,7 +32,7 @@ namespace MailBox
         {
             int i = 0;
             var grid = new Grid();
-            //grid.Margin = new Thickness(0,0,10,0);
+            grid.Margin = new Thickness(0,0,10,0);
             GenerateRowsAndColumns(grid);
             var from = getMailbox(msg.From.Mailboxes);
             GenerateTextBlock(grid, GetString(msg.To.Mailboxes), ref i);
