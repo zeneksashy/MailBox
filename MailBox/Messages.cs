@@ -13,8 +13,8 @@ namespace MailBox
 {
     public class Messages
     {
-        List<uint> seen = new List<uint>();
-        List<uint> notSeen = new List<uint>();
+        List<MimeMessage> seen = new List<MimeMessage>();
+        List<MimeMessage> notseen = new List<MimeMessage>();
         List<MimeMessage> unSorted = new List<MimeMessage>();
         List<MimeMessage> original = new List<MimeMessage>();
         List<MimeMessage> msg = new List<MimeMessage>();
@@ -29,10 +29,9 @@ namespace MailBox
             this.path = path;
             this.inbox = inbox;
         }
-        public bool CheckIfRead(uint uid)
+        public bool CheckIfRead(MimeMessage msg)
         {
-
-            return seen.Contains(uid);
+            return notseen.Any(m => m.MessageId == msg.MessageId);
         }
         public void SaveToFile()
         {
@@ -52,14 +51,12 @@ namespace MailBox
             Settings.Default.isSaved = true;
             Settings.Default.Save();
         }
-        //todo
-        //public void ShowMessages() { }
-        //TODO
         public void RemoveFromServer(int uid,List<MimeMessage> messages)
         {
             var i = unSorted.IndexOf(messages.ElementAt(uid));
             imap.Inbox.AddFlags(i, MessageFlags.Deleted, false);
             imap.Inbox.Expunge();
+         //   inbox.
         }
         public void RemoveFromPc(int uid)
         {
@@ -69,21 +66,22 @@ namespace MailBox
         public void RemoveFromLists(int uid)
         {
             var i = unSorted.IndexOf(msg.ElementAt(uid));
+            var mess = unSorted.ElementAt(uid);
             unSorted.RemoveAt(i);
-            msg.RemoveAt(uid);
-            if (seen.Contains((uint)i))
-                seen.Remove((uint)i);
+            if (seen.Any(m => m.MessageId == mess.MessageId))
+                seen.Remove(mess);
             else
-                notSeen.Remove((uint)i);
+                notseen.Remove(mess);
         }
-        public void MessageShown(uint uid)
+        public void MessageShown(int uid)
         {
-            if(!seen.Contains(uid))
+            var mess = unSorted.ElementAt(uid);
+            if (!seen.Any(m => m.MessageId == mess.MessageId))
             {
-                seen.Add(uid);
-                notSeen.Remove(uid);
+                seen.Add(mess);
+                notseen.Remove(mess);
+                inbox.AddFlags(UniqueId.Parse(uid.ToString()), MessageFlags.Seen, true);
             }
-            //inbox.AddFlags(uid, MessageFlags.Seen, true);
         }
         public List<MimeMessage> LoadMessages()
         {
@@ -93,12 +91,13 @@ namespace MailBox
             }
             foreach (var uid in inbox.Search(SearchQuery.NotSeen))
             {
-                notSeen.Add(uid.Id);
-
+                var message = inbox.GetMessage(uid);
+                notseen.Add(message);
             }
             foreach (var uid in inbox.Search(SearchQuery.Seen))
             {
-                seen.Add(uid.Id);
+                var message = inbox.GetMessage(uid);
+                seen.Add(message);
             }
             msg = unSorted;
             return new List<MimeMessage>(msg);

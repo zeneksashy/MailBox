@@ -368,12 +368,7 @@ namespace MailBox
             var message = msg[uid - 1];
             browserPanel.ChangeTarget(message, uid, path, tempdirs);
         }
-        #endregion
-
-        
-
-      
+        #endregion      
     }
-
 
 }

@@ -102,7 +102,9 @@ namespace MailBox
         private void Button_Click(object sender, EventArgs arg)
         {
             var button = sender as Button;
+            
             int uid = int.Parse(button.Uid);
+            msgclient.MessageShown(uid);
             mainWindow = App.Current.MainWindow as MainWindow;
             mainWindow.OpenInBrowser(uid);
 
@@ -114,7 +116,6 @@ namespace MailBox
             button.Foreground = Brushes.Black;
             button.BorderBrush = Brushes.White;
             var i = int.Parse(button.Uid);
-            msgclient.MessageShown((uint)i - 1);
             mainWindow = App.Current.MainWindow as MainWindow;
             mainWindow.DeleteMessage(i);
             panel.Children.Remove(button);
@@ -140,9 +141,9 @@ namespace MailBox
             {
                 var button = new Button();
                 button.Style= Resources["ListButton"] as Style;
-                if (msgclient.CheckIfRead(index))
+                if (msgclient.CheckIfRead(msg))
                 {
-                    button.Background = Brushes.WhiteSmoke;
+                    button.Background = Brushes.LightCyan;
                     button.BorderBrush = Brushes.LightBlue;
                 }
                 else

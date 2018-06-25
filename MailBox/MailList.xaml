@@ -20,7 +20,7 @@
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Background" Value="#FFB3B9BF"/>
                                 <Setter Property="BorderBrush" Value="#FFB3B9BF"/>
-                                <Setter Property="Opacity" Value="0.95"/>
+                                <Setter Property="Opacity" Value="0.90"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
