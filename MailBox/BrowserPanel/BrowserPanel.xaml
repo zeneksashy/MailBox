@@ -1,0 +1,66 @@
+﻿<UserControl x:Class="MailBox.BrowserPanel.BrowserPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MailBox.BrowserPanel"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="647">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        
+            <StackPanel x:Name="infoStackPanel" Orientation="Vertical" Background="White" Margin="10" CanVerticallyScroll="False">
+            <Border BorderThickness="1 1 1 0" BorderBrush="LightGray">
+                <DockPanel>
+                    <TextBlock FontSize="18" Padding="5,2,0,3"  VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding Subject}"/>
+                    <Button x:Name="replyButton" HorizontalAlignment="Right"  Content="Reply" Padding="10,0" VerticalContentAlignment="Center" Click="ReplyButton_Click"/>
+                </DockPanel>
+            </Border>
+
+            <Grid x:Name="infoGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Border BorderThickness="1 1 0 1" BorderBrush="LightGray">
+                    <StackPanel  Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <Label Content="From:" Foreground="DimGray"/>
+                        <TextBlock VerticalAlignment="Center" x:Name="fromTextBlock" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" BorderThickness="1 1 0 1" BorderBrush="LightGray">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <Label Content="To:" Foreground="DimGray"/>
+                        <TextBlock VerticalAlignment="Center" x:Name="toTextBlock"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="2" BorderThickness="1" BorderBrush="LightGray">
+                    <StackPanel  Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <Label Content="Date:" Foreground="DimGray"/>
+                        <TextBlock VerticalAlignment="Center" Text="{Binding Date}"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </StackPanel>
+
+        
+        <Border Grid.Row="1" BorderThickness="1" Margin="10" BorderBrush="LightGray">
+            <DockPanel>
+
+
+                <ScrollViewer x:Name="scrollViewerAttachments" DockPanel.Dock="Bottom" Margin="0,10,0,0" Padding="10" Visibility="Collapsed"  VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                    <StackPanel x:Name="attachments" Orientation="Horizontal">
+                    </StackPanel>
+                </ScrollViewer>
+                <WebBrowser DockPanel.Dock="Top" x:Name="browserBrowser" />
+
+            </DockPanel>
+        </Border>
+        
+
+    </Grid>
+</UserControl>
