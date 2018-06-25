@@ -338,7 +338,6 @@ namespace MailBox
         {
             if (Directory.Exists(path + "\\msg" + uid + ".eml"))
                 File.Delete(path + "\\msg" + uid + ".eml");
-
         }
 
         #endregion
@@ -458,7 +457,9 @@ namespace MailBox
             uid--;
             RemoveFromPc(uid);
             RemoveFromServer(uid);
-           unSorted.Remove(msg.ElementAt(uid));
+            var i = unSorted.IndexOf(msg.ElementAt(uid));
+            unSorted.RemoveAt(i);
+           //unSorted.Remove(msg.ElementAt(uid));
            msg.RemoveAt(uid);
         }
         /// <summary>
