@@ -50,15 +50,14 @@ namespace MailBox
         Imapfeatures features;
         string path;
         Client client = Client.GetInstance();
-        List<uint> seen = new List<uint>();
-        List<uint> notSeen = new List<uint>();
-        List<MimeMessage> unSorted = new List<MimeMessage>();
-        List<MimeMessage> original = new List<MimeMessage>();
-        List<MimeMessage> msg = new List<MimeMessage>();
+       // List<MimeMessage> unSorted;//= new List<MimeMessage>();
+        List<MimeMessage> original;// = new List<MimeMessage>();
+        List<MimeMessage> msg;
         ImapClient imap;
         HashSet<string> tempdirs = new HashSet<string>();
         IMailFolder inbox;
         ImapIdle idle;
+        Messages messages;
 
         #endregion
 
@@ -78,35 +77,11 @@ namespace MailBox
             inbox = imap.Inbox;
             inbox.Open(FolderAccess.ReadWrite);
             idle = new ImapIdle(inbox.Count);
- 
+            messages = new Messages(imap, inbox, path);
         }
 
 
         #region private methods
-        // Powiadomienie o usunięciu wiadomości, niezbyt potrzebne
-        //private void Inbox_MessageFlagsChanged(object sender, MessageFlagsChangedEventArgs e)
-        //{
-        //    if (e.Flags == MessageFlags.Deleted)
-        //        MessageBox.Show("Message deleted");
-        //} 
-        private void SaveToFile()
-        {
-            imap.Disconnect(true);
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-            int i = 1;
-            var sb = new StringBuilder(path);
-            foreach (var item in unSorted)
-            {
-                sb.Append("\\msg").Append(i).Append(".eml");
-                item.WriteTo(sb.ToString());
-                i++;
-                sb.Clear();
-                sb.Append(path);
-            }
-            Settings.Default.isSaved = true;
-            Settings.Default.Save();
-        }
         private void ChangeVisibilities()
         {
             ShowMessages();
@@ -118,12 +93,12 @@ namespace MailBox
             features = new Imapfeatures(msg);
             original = msg;
             msg = features.SortBy(SortFilters.Date, Order.DSC);
-            mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
+            mails.Dispatcher.Invoke(() => mails.ShowMessageList(messages,msg));
         }
         #region event handlers
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            SaveToFile();
+            messages.SaveToFile();
         }
      
         private void Reply_btn_Click(object sender, RoutedEventArgs e)
@@ -188,7 +163,7 @@ namespace MailBox
                 }
             }
             msg = features.SortBy(sort, ord);
-            mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
+            mails.Dispatcher.Invoke(() => mails.ShowMessageList(messages,msg));
         }
 
         private void Date_Click(object sender, RoutedEventArgs e)
@@ -198,7 +173,7 @@ namespace MailBox
             SearchFilters filter;
             Enum.TryParse((string)menu.Header, out filter);
             msg = features.FilterBy(MessageParts.Date, filter, date);
-            mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
+            mails.Dispatcher.Invoke(() => mails.ShowMessageList(messages,msg));
         }
 
         private void Sbj_Contains_PreviewKeyUp(object sender, KeyEventArgs e)
@@ -214,7 +189,7 @@ namespace MailBox
                 Enum.TryParse(msgpart, out part);
                 Enum.TryParse(searchfilter, out filter);
                 msg = features.FilterBy(part, filter, Sbj_Contains.Text);
-                mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
+                mails.Dispatcher.Invoke(() => mails.ShowMessageList(messages,msg));
             }
         }
 
@@ -233,7 +208,7 @@ namespace MailBox
                 Enum.TryParse(msgpart, out part);
                 Enum.TryParse(searchfilter, out filter);
                 msg = features.FilterBy(part, filter, txtbx.Text);
-                mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
+                mails.Dispatcher.Invoke(() => mails.ShowMessageList(messages,msg));
             }
         }
 
@@ -256,7 +231,7 @@ namespace MailBox
                 Enum.TryParse(msgpart, out part);
                 Enum.TryParse(searchfilter, out filter);
                 msg = features.FilterBy(part, filter, txtbx.Text);
-                mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
+                mails.Dispatcher.Invoke(() => mails.ShowMessageList(messages,msg));
             }
         }
         private void Bdy_Contains_PreviewKeyUp(object sender, KeyEventArgs e)
@@ -272,14 +247,14 @@ namespace MailBox
                 Enum.TryParse(msgpart, out part);
                 Enum.TryParse(searchfilter, out filter);
                 msg = features.FilterBy(part, filter, Bdy_Contains.Text);
-                mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
+                mails.Dispatcher.Invoke(() => mails.ShowMessageList(messages,msg));
             }
         }
         private void Reset_Click(object sender, RoutedEventArgs e)
         {
             msg = original;
             features.ResetFilters();
-            mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
+            mails.Dispatcher.Invoke(() => mails.ShowMessageList(messages,msg));
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -291,9 +266,9 @@ namespace MailBox
         private void HasAttachments_MenuItem_Click(object sender, RoutedEventArgs e)
         {
             msg = features.FilterBy(MessageParts.Body, SearchFilters.HasAttachments, "");
-            mails.Dispatcher.Invoke(() => mails.ShowMessageList(msg));
+            mails.Dispatcher.Invoke(() => mails.ShowMessageList(messages,msg));
         }
-
+        //pokazywanie attachmentow chyba nie potrzebne
         private void UserCtrl_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             var userctrl = sender as Attachment;
@@ -325,18 +300,7 @@ namespace MailBox
             new Send.SendWindow().Show();
         }
 
-        private void RemoveFromServer(int uid)
-        {
-            var i = unSorted.IndexOf(msg.ElementAt(uid));
-            imap.Inbox.AddFlags(i, MessageFlags.Deleted, false);
-            imap.Inbox.Expunge();
-        }
-        private void RemoveFromPc(int uid)
-        {
-            if (Directory.Exists(path + "\\msg" + uid + ".eml"))
-                File.Delete(path + "\\msg" + uid + ".eml");
-        }
-
+      
         #endregion
 
         #region imap methods
@@ -345,33 +309,13 @@ namespace MailBox
         /// </summary>
         private void LoadMessages()
         {
-            foreach (var item in Fetch(inbox))
-            {
-                client.mails.Add(item);
-                unSorted.Add(item);
-                msg.Add(item);
-            }
-            foreach (var uid in inbox.Search(SearchQuery.NotSeen))
-            {
-                notSeen.Add(uid.Id);             
-               // var message = inbox.GetMessage(uid);
-                //unSorted.Add(message);
-            }
-            foreach (var uid in inbox.Search(SearchQuery.Seen))
-            {
-                seen.Add(uid.Id);
-            //    var message = inbox.GetMessage(uid);
-            //    unSorted.Add(message);
-            }
+          msg =  messages.LoadMessages();
             ChangeVisibilities();
         }
         private void LoadMessages(int index)
         {
-            foreach (var item in Fetch(inbox,index))
-            {
-                client.mails.Add(item);
-                msg.Add(item);
-            }
+          msg =  messages.LoadMessages(index);
+            ChangeVisibilities();
         }
         /// <summary>
         /// Load mails from path and adds them to msg list
@@ -379,53 +323,8 @@ namespace MailBox
         /// <param name="path"> path of a mails </param>
         private void LoadMessages(string path)
         {
-            var files = Directory.GetFiles(path);
-            foreach (var file in files)
-            {
-                unSorted.Add(MimeMessage.Load(file));
-
-            }
-            if (Check())
-                LoadMessages(unSorted.Count);
-            msg = unSorted;
+         msg =  messages.LoadMessages(path);
             ChangeVisibilities();
-        }
-        private bool Check() => unSorted.Count < inbox.Count;
-
-        /// <summary>
-        /// fetches all messages in inbox
-        /// </summary>
-        /// <param name="inbox"> inbox</param>
-        /// <returns> retruns abstract list of mails </returns>
-        IEnumerable<MimeMessage> Fetch(IMailFolder inbox)
-        {
-            for (int i = 0; i < inbox.Count; i++)
-            {
-               // uids.Add(i);
-                yield return inbox.GetMessage(i);
-            }
-        }
-        IEnumerable<MimeMessage> Fetch(IMailFolder inbox,int startindex)
-        {
-            for (int i = startindex; i < inbox.Count; i++)
-            {
-               // uids.Add(i);
-                yield return inbox.GetMessage(i);
-            }
-        }
-        /// <summary>
-        /// Used to get mailboxes from "To" and "From" list and return them as string
-        /// </summary>
-        /// <param name="addresses"> list of mailboxes</param>
-        /// <returns>list of mialboxes as string</returns>
-        private List<string> getMailbox(IEnumerable<MailboxAddress> addresses)
-        {
-            var listofadrs = new List<string>();
-            foreach (var addres in addresses)
-            {
-                listofadrs.Add(addres.Address);
-            }
-            return listofadrs;
         }
         #endregion
 
@@ -443,8 +342,8 @@ namespace MailBox
         #region public methods
         public void AddToList(MimeMessage message)
         {
-            unSorted.Add(message);
-            msg.Add(message);
+            //unSorted.Add(message);
+            msg = messages.AddToList(message);
             ShowMessages();
         }
         /// <summary>
@@ -455,12 +354,10 @@ namespace MailBox
         public void DeleteMessage(int uid)
         {
             uid--;
-            RemoveFromPc(uid);
-            RemoveFromServer(uid);
-            var i = unSorted.IndexOf(msg.ElementAt(uid));
-            unSorted.RemoveAt(i);
-           //unSorted.Remove(msg.ElementAt(uid));
-           msg.RemoveAt(uid);
+            messages.RemoveFromPc(uid);
+            messages.RemoveFromServer(uid,msg);
+            messages.RemoveFromLists(uid);
+            msg.RemoveAt(uid);
         }
         /// <summary>
         /// Shows a message in a browser

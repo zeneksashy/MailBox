@@ -21,7 +21,7 @@ namespace MailBox
     public partial class MailList : UserControl
     {
         MainWindow mainWindow;
-
+        Messages msgclient;
 
         public MailList()
         {
@@ -110,8 +110,13 @@ namespace MailBox
         private void Img_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Button button = ((sender as Image).Parent as Grid).Parent as Button;
+            button.Background = Brushes.White;
+            button.Foreground = Brushes.Black;
+            button.BorderBrush = Brushes.White;
+            var i = int.Parse(button.Uid);
+            msgclient.MessageShown((uint)i - 1);
             mainWindow = App.Current.MainWindow as MainWindow;
-            mainWindow.DeleteMessage(int.Parse(button.Uid));
+            mainWindow.DeleteMessage(i);
             panel.Children.Remove(button);
         }
         #endregion
@@ -125,19 +130,31 @@ namespace MailBox
             }
             return str;
         }   
-        public void ShowMessageList(List<MimeMessage> messages)
+        public void ShowMessageList(Messages msgclient,List<MimeMessage> messages)
         {
             panel.Children.Clear();
             int i = 1;
-            int index = 0;
+            uint index = 0;
+
             foreach (var msg in messages)
             {
                 var button = new Button();
                 button.Style= Resources["ListButton"] as Style;
-                button.Background = Brushes.White;
-                button.Foreground = Brushes.Black;
-                button.BorderBrush = Brushes.White;
+                if (msgclient.CheckIfRead(index))
+                {
+                    button.Background = Brushes.WhiteSmoke;
+                    button.BorderBrush = Brushes.LightBlue;
+                }
+                else
+                {
+                    button.Background = Brushes.White;
+                    button.Foreground = Brushes.Black;
+                    button.BorderBrush = Brushes.White;
+                }
+               
                 button.Uid = i.ToString();
+                
+
                 button.MouseEnter += Button_MouseEnter;
                 button.MouseLeave += Button_MouseLeave;
                 button.Click += Button_Click;
@@ -146,6 +163,7 @@ namespace MailBox
                 i++;
                 index++;
             }
+            this.msgclient = msgclient;
         }
         public void NewMessage(MimeMessage message)
         {
