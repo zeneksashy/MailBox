@@ -131,6 +131,15 @@ namespace MailBox
             }
             return str;
         }   
+
+        public void MarkAsRead(int index)
+        {
+            var message = panel.Children[index] as Button;
+            message.Background = Brushes.White;
+            message.Foreground = Brushes.Black;
+            message.BorderBrush = Brushes.White;
+        }
+
         public void ShowMessageList(Messages msgclient,List<MimeMessage> messages)
         {
             panel.Children.Clear();

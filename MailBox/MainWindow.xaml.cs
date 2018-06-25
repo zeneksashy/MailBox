@@ -77,7 +77,7 @@ namespace MailBox
             inbox = imap.Inbox;
             inbox.Open(FolderAccess.ReadWrite);
             idle = new ImapIdle(inbox.Count);
-            messages = new Messages(imap, inbox, path);
+            messages = new Messages(imap, inbox, path, mails);
         }
 
 

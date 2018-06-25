@@ -19,15 +19,17 @@ namespace MailBox
         List<MimeMessage> original = new List<MimeMessage>();
         List<MimeMessage> msg = new List<MimeMessage>();
         ImapClient imap;
+        MailList mailList;
         IMailFolder inbox;
         string path;
         //TODO
 
-        public Messages(ImapClient imap,IMailFolder inbox,string path)
+        public Messages(ImapClient imap,IMailFolder inbox,string path, MailList mailList)
         {
             this.imap = imap;
             this.path = path;
             this.inbox = inbox;
+            this.mailList = mailList;
         }
         public bool CheckIfRead(MimeMessage msg)
         {
@@ -75,12 +77,16 @@ namespace MailBox
         }
         public void MessageShown(int uid)
         {
-            var mess = unSorted.ElementAt(uid);
+            var mess = msg.ElementAt(msg.Count - uid);
+            var i = unSorted.IndexOf(mess);
+            
             if (!seen.Any(m => m.MessageId == mess.MessageId))
             {
                 seen.Add(mess);
-                notseen.Remove(mess);
-                inbox.AddFlags(UniqueId.Parse(uid.ToString()), MessageFlags.Seen, true);
+                notseen.Remove(notseen.Single(foo => foo.MessageId == mess.MessageId));
+                inbox.AddFlags(i, MessageFlags.Seen, true);
+                inbox.Expunge();
+                mailList.MarkAsRead(uid - 1);
             }
         }
         public List<MimeMessage> LoadMessages()
